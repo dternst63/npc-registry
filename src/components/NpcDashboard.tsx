@@ -21,7 +21,10 @@ const NpcDashboard = () => {
   };
 
   const deleteSelectedNpc = async () => {
-    if (!selectedNpc) return;
+    if (!selectedNpc || !selectedNpc.id) {
+      console.warn("Delete attempted with no selected NPC");
+      return;
+    }
 
     await fetch(`http://localhost:3001/api/npcs/${selectedNpc.id}`, {
       method: "DELETE",
