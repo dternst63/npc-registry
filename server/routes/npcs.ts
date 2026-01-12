@@ -52,4 +52,31 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+/**
+ * PUT /api/npcs/:id
+ */
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updated = await Npc.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ error: "NPC not found" });
+    }
+
+    // reuse your mapper
+    res.json(mapNpc(updated.toObject()));
+
+  } catch (err) {
+    console.error("Failed to update NPC:", err);
+    res.status(500).json({ error: "Failed to update NPC" });
+  }
+});
+
+
 export default router;
