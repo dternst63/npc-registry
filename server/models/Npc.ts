@@ -3,11 +3,12 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface INpc extends Document {
   campaignId: string;
   name: string;
-  role: string;
-  descriptor: string;
-  race: string;
-  agenda: string;
+  role?: string;
+  descriptor?: string;
+  race?: string;
+  agenda?: string;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const NpcSchema = new Schema<INpc>(
@@ -19,7 +20,9 @@ const NpcSchema = new Schema<INpc>(
     race: String,
     agenda: String,
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 export default mongoose.model<INpc>("Npc", NpcSchema);

@@ -7,8 +7,21 @@ const router = Router();
  * GET /api/npcs
  */
 router.get("/", async (_req, res) => {
-  const npcs = await Npc.find().sort({ createdAt: 1 });
-  res.json(npcs);
+  try {
+    const npcs = await Npc.find().sort({ createdAt: 1 }).lean();
+
+    const normalized = npcs.map((npc: any) => ({
+      id: npc._id.toString(),
+      ...npc,
+      _id: undefined,
+      __v: undefined,
+    }));
+
+    res.json(normalized);
+  } catch (err) {
+    console.error("Failed to load NPCs:", err);
+    res.status(500).json({ error: "Failed to load NPCs" });
+  }
 });
 
 /**
