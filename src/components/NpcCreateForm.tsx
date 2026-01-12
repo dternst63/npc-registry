@@ -10,6 +10,7 @@ interface NpcCreateFormProps {
 }
 
 interface NpcFormData {
+  campaignId: string;
   name: string;
   role: string;
   descriptor: string;
@@ -23,6 +24,7 @@ const NpcCreateForm = ({
   onClose,
 }: NpcCreateFormProps) => {
   const [formData, setFormData] = useState<NpcFormData>({
+    campaignId,
     name: "",
     role: "",
     descriptor: "",

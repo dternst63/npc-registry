@@ -1,23 +1,25 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface NpcDocument extends Document {
+export interface INpc extends Document {
+  campaignId: string;
   name: string;
   role: string;
   descriptor: string;
   race: string;
   agenda: string;
+  createdAt: Date;
 }
 
-const NpcSchema = new Schema<NpcDocument>(
+const NpcSchema = new Schema<INpc>(
   {
+    campaignId: { type: String, required: true },
     name: { type: String, required: true },
-    role: { type: String, required: true },
-    descriptor: { type: String, required: true },
-    race: { type: String, default: "" },
-    agenda: { type: String, default: "" },
+    role: String,
+    descriptor: String,
+    race: String,
+    agenda: String,
   },
   { timestamps: true }
 );
 
-export const NpcModel =
-  mongoose.models.Npc || mongoose.model<NpcDocument>("Npc", NpcSchema);
+export default mongoose.model<INpc>("Npc", NpcSchema);
