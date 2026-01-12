@@ -16,6 +16,17 @@ const NpcDashboard = () => {
     setSelectedNpc(npc);
   };
 
+  const deleteSelectedNpc = async () => {
+    if (!selectedNpc) return;
+
+    await fetch(`http://localhost:3001/api/npcs/${selectedNpc.id}`, {
+      method: "DELETE",
+    });
+
+    setNpcs((prev) => prev.filter((npc) => npc.id !== selectedNpc.id));
+    setSelectedNpc(null);
+  };
+
   useEffect(() => {
     fetch("http://localhost:3001/api/npcs")
       .then((res) => res.json())
@@ -35,12 +46,19 @@ const NpcDashboard = () => {
       </header>
 
       {/* Toolbar */}
-      <div className="mb-4">
+      <div className="mb-4 flex gap-2">
         <button
           onClick={() => setIsCreateOpen(true)}
           className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
         >
           + Create NPC
+        </button>
+        <button
+          onClick={deleteSelectedNpc}
+          disabled={!selectedNpc}
+          className="bg-red-600 text-white px-4 py-2 rounded disabled:opacity-50 hover:bg-red-700"
+        >
+          - Delete NPC
         </button>
       </div>
 

@@ -10,12 +10,14 @@ router.get("/", async (_req, res) => {
   try {
     const npcs = await Npc.find().sort({ createdAt: 1 }).lean();
 
-    const normalized = npcs.map((npc: any) => ({
-      id: npc._id.toString(),
-      ...npc,
-      _id: undefined,
-      __v: undefined,
-    }));
+   const normalized = npcs.map((npc: any) => {
+  const { _id, __v, ...rest } = npc;
+  return {
+    id: _id.toString(),
+    ...rest,
+  };
+});
+
 
     res.json(normalized);
   } catch (err) {
@@ -37,6 +39,27 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Failed to create NPC" });
   }
 });
+
+/**
+ * DELETE /api/npcs/:id
+ */
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deleted = await Npc.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ error: "NPC not found" });
+    }
+
+    res.status(204).send();
+  } catch (err) {
+    console.error("Failed to delete NPC:", err);
+    res.status(500).json({ error: "Failed to delete NPC" });
+  }
+});
+
 
 export default router;
 
