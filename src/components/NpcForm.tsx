@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Npc } from "../types/Npc";
+import { validateNpcForm } from "../validation/validateNpcForm";
 
 export interface NpcFormProps {
   campaignId: string;
@@ -24,6 +25,18 @@ const NpcForm = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  const getAllFieldsTouched = () => ({
+    name: true,
+    role: true,
+    descriptor: true,
+    race: true,
+    agenda: true,
+  });
+
+  const isFormValid = Object.keys(validateNpcForm(formData)).length === 0;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -35,11 +48,23 @@ const NpcForm = ({
     }));
   };
 
+  const handleBlur = (field: string) => {
+    const validationErrors = validateNpcForm(formData);
+
+    setTouched((prev) => ({ ...prev, [field]: true }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [field]: validationErrors[field],
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
-    
+    setTouched(getAllFieldsTouched());
+
     try {
       const isEdit = Boolean(initialNpc);
 
@@ -48,6 +73,13 @@ const NpcForm = ({
         : "http://localhost:3001/api/npcs";
 
       const method = isEdit ? "PUT" : "POST";
+
+      const validationErrors = validateNpcForm(formData);
+
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors);
+        return;
+      }
 
       const res = await fetch(url, {
         method,
@@ -96,10 +128,22 @@ const NpcForm = ({
             name="name"
             value={formData.name}
             onChange={handleChange}
-            required
-            className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm
-                       focus:outline-none focus:ring-1 focus:ring-blue-500"
+            onBlur={() => {
+              handleBlur("name");
+            }}
+            className={`mt-1 w-full rounded border px-2 py-1 text-sm
+                        focus:outline-none focus:ring-1
+                        ${
+                          touched.name && errors.name
+                            ? "border-red-500 focus:ring-red-500"
+                            : "border-gray-300 focus:ring-blue-500"
+                        }
+  `}
           />
+
+          {touched.name && errors.name && (
+            <p className="text-xs text-red-600 mt-1">{errors.name}</p>
+          )}
         </div>
 
         <div>
@@ -110,10 +154,16 @@ const NpcForm = ({
             name="role"
             value={formData.role}
             onChange={handleChange}
+            onBlur={() => {
+              handleBlur("role");
+            }}
             required
             className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm
                        focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
+          {errors.role && (
+            <p className="text-xs text-red-600 mt-1">{errors.role}</p>
+          )}
         </div>
 
         <div>
@@ -124,10 +174,16 @@ const NpcForm = ({
             name="descriptor"
             value={formData.descriptor}
             onChange={handleChange}
+            onBlur={() => {
+              handleBlur("descriptor");
+            }}
             required
             className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm
                        focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
+          {errors.descriptor && (
+            <p className="text-xs text-red-600 mt-1">{errors.descriptor}</p>
+          )}
         </div>
 
         <div>
@@ -138,9 +194,15 @@ const NpcForm = ({
             name="race"
             value={formData.race}
             onChange={handleChange}
+            onBlur={() => {
+              handleBlur("race");
+            }}
             className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm
                        focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
+          {errors.race && (
+            <p className="text-xs text-red-600 mt-1">{errors.race}</p>
+          )}
         </div>
 
         <div>
@@ -151,10 +213,16 @@ const NpcForm = ({
             name="agenda"
             value={formData.agenda}
             onChange={handleChange}
+            onBlur={() => {
+              handleBlur("agenda");
+            }}
             rows={3}
             className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm
                        focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
+          {errors.agenda && (
+            <p className="text-xs text-red-600 mt-1">{errors.agenda}</p>
+          )}
         </div>
       </div>
 
@@ -172,8 +240,9 @@ const NpcForm = ({
 
         <button
           type="submit"
-          disabled={isSubmitting}
-          className="px-4 py-2 rounded bg-black text-white hover:bg-gray-800 disabled:opacity-50"
+          disabled={isSubmitting || !isFormValid}
+          className="px-4 py-2 rounded bg-black text-white
+             hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting
             ? "Saving..."

@@ -4,6 +4,20 @@ import { mapNpc } from "../utils/mapNpc.js";
 
 const router = Router();
 
+function validateNpcPayload(body: any) {
+  if (!body.name || body.name.length < 2) return "Invalid name";
+  if (!body.role || body.role.length < 2) return "Invalid role";
+  if (!body.descriptor || body.descriptor.length < 3)
+    return "Invalid descriptor";
+
+  if (body.name.length > 50) return "Name too long";
+  if (body.role.length > 50) return "Role too long";
+  if (body.descriptor.length > 100) return "Descriptor too long";
+  if (body.agenda && body.agenda.length > 500) return "Agenda too long";
+
+  return null;
+}
+
 /**
  * GET /api/npcs
  */
@@ -21,6 +35,11 @@ router.get("/", async (_req, res) => {
  * POST /api/npcs
  */
 router.post("/", async (req, res) => {
+  const error = validateNpcPayload(req.body);
+  if (error) {
+    return res.status(400).json({ error });
+  }
+
   try {
     const npc = new Npc(req.body);
     const savedNpc = await npc.save();
@@ -56,6 +75,11 @@ router.delete("/:id", async (req, res) => {
  * PUT /api/npcs/:id
  */
 router.put("/:id", async (req, res) => {
+  const error = validateNpcPayload(req.body);
+  if (error) {
+    return res.status(400).json({ error });
+  }
+
   try {
     const { id } = req.params;
 
