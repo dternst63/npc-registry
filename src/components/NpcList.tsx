@@ -11,7 +11,11 @@ interface NpcListProps {
 
 const NpcList = ({ npcs, selectedId, onSelect, isDisabled }: NpcListProps) => {
   return (
-    <div className="bg-white rounded-lg shadow p-4">
+    <div
+      className={`bg-white rounded-lg shadow p-4 transition
+    ${isDisabled ? "opacity-50 pointer-events-none" : ""}
+  `}
+    >
       <h2 className="font-semibold mb-3">NPCs</h2>
 
       <ul className="space-y-2">
@@ -19,13 +23,10 @@ const NpcList = ({ npcs, selectedId, onSelect, isDisabled }: NpcListProps) => {
           <li
             key={npc.id}
             onClick={() => !isDisabled && onSelect(npc)}
-            className={`cursor-pointer rounded px-3 py-2 text-sm
-              ${
-                npc.id === selectedId
-                  ? "bg-gray-200 font-medium"
-                  : "hover:bg-gray-100"
-              }
-            `}
+            className={`rounded px-3 py-2 text-sm transition
+              ${npc.id === selectedId ? "bg-gray-200 font-medium" : "hover:bg-gray-100"}
+              ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"}
+              `}
           >
             {npc.name}
           </li>
