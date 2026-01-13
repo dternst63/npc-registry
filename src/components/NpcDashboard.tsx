@@ -3,7 +3,7 @@ import type { Npc } from "../types/Npc";
 import NpcList from "./NpcList";
 import NpcCard from "./NpcCard";
 import Modal from "./Modal";
-import NpcCreateForm from "./NpcCreateForm";
+import NpcForm from "./NpcForm";
 import { useEffect, useState } from "react";
 
 const NpcDashboard = () => {
@@ -11,14 +11,12 @@ const NpcDashboard = () => {
   const [selectedNpc, setSelectedNpc] = useState<Npc | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState<"confirm" | "deleted">(
     "confirm"
   );
 
-  const handleNpcCreated = (npc: Npc) => {
-    setNpcs((prev) => [...prev, npc]);
-    setSelectedNpc(npc);
-  };
+ const isModalOpen = isCreateOpen || isDeleteOpen || isEditOpen;
 
   const deleteSelectedNpc = async () => {
     if (!selectedNpc || !selectedNpc.id) {
@@ -56,6 +54,7 @@ const NpcDashboard = () => {
       <div className="mb-4 flex gap-2">
         <button
           onClick={() => setIsCreateOpen(true)}
+          disabled={isModalOpen}
           className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
         >
           + Create NPC
@@ -70,6 +69,13 @@ const NpcDashboard = () => {
         >
           - Delete NPC
         </button>
+        <button
+          onClick={() => setIsEditOpen(true)}
+          disabled={!selectedNpc || isModalOpen}
+          className="px-4 py-2 rounded bg-blue-600 text-white disabled:opacity-50"
+        >
+          Edit NPC
+        </button>
       </div>
 
       {/* Main Content */}
@@ -78,15 +84,20 @@ const NpcDashboard = () => {
           npcs={npcs}
           selectedId={selectedNpc?.id ?? null}
           onSelect={setSelectedNpc}
+          isDisabled={isModalOpen}
         />
 
         <NpcCard npc={selectedNpc} />
       </div>
       <Modal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)}>
-        <NpcCreateForm
+        <NpcForm
           campaignId="demo"
           onClose={() => setIsCreateOpen(false)}
-          onCreated={handleNpcCreated}
+          onSubmitSuccess={(npc) => {
+            setNpcs((prev) => [...prev, npc]);
+            setSelectedNpc(npc);
+            setIsCreateOpen(false);
+          }}
         />
       </Modal>
       <Modal isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)}>
@@ -138,6 +149,22 @@ const NpcDashboard = () => {
               </button>
             </div>
           </div>
+        )}
+      </Modal>
+      <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)}>
+        {selectedNpc && (
+          <NpcForm
+            campaignId="demo"
+            initialNpc={selectedNpc}
+            onClose={() => setIsEditOpen(false)}
+            onSubmitSuccess={(updatedNpc) => {
+              setNpcs((prev) =>
+                prev.map((npc) => (npc.id === updatedNpc.id ? updatedNpc : npc))
+              );
+              setSelectedNpc(updatedNpc);
+              setIsEditOpen(false);
+            }}
+          />
         )}
       </Modal>
     </div>

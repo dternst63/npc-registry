@@ -6,9 +6,10 @@ interface NpcListProps {
   npcs: Npc[];
   selectedId: string | null;
   onSelect: (npc: Npc) => void;
+  isDisabled?: boolean;
 }
 
-const NpcList = ({ npcs, selectedId, onSelect }: NpcListProps) => {
+const NpcList = ({ npcs, selectedId, onSelect, isDisabled }: NpcListProps) => {
   return (
     <div className="bg-white rounded-lg shadow p-4">
       <h2 className="font-semibold mb-3">NPCs</h2>
@@ -17,7 +18,7 @@ const NpcList = ({ npcs, selectedId, onSelect }: NpcListProps) => {
         {npcs.map((npc) => (
           <li
             key={npc.id}
-            onClick={() => onSelect(npc)}
+            onClick={() => !isDisabled && onSelect(npc)}
             className={`cursor-pointer rounded px-3 py-2 text-sm
               ${
                 npc.id === selectedId

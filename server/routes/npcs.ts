@@ -59,11 +59,7 @@ router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const updated = await Npc.findByIdAndUpdate(
-      id,
-      req.body,
-      { new: true }
-    );
+    const updated = await Npc.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!updated) {
       return res.status(404).json({ error: "NPC not found" });
@@ -71,12 +67,10 @@ router.put("/:id", async (req, res) => {
 
     // reuse your mapper
     res.json(mapNpc(updated.toObject()));
-
   } catch (err) {
     console.error("Failed to update NPC:", err);
     res.status(500).json({ error: "Failed to update NPC" });
   }
 });
-
 
 export default router;
