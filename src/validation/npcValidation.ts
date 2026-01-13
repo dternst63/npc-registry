@@ -10,8 +10,7 @@ export const npcValidation = {
     maxLength: 50,
   },
   descriptor: {
-    required: true,
-    minLength: 3,
+    required: false,
     maxLength: 100,
   },
   race: {

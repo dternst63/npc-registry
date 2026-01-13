@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Npc } from "../types/Npc";
 import { validateNpcForm } from "../validation/validateNpcForm";
+import { npcValidation } from "../validation/npcValidation";
 
 export interface NpcFormProps {
   campaignId: string;
@@ -35,6 +36,12 @@ const NpcForm = ({
     race: true,
     agenda: true,
   });
+
+  const getCharCount = (field: string) => {
+    const value = formData[field] ?? "";
+    const max = npcValidation[field]?.maxLength;
+    return { count: value.length, max };
+  };
 
   const isFormValid = Object.keys(validateNpcForm(formData)).length === 0;
 
@@ -138,12 +145,27 @@ const NpcForm = ({
                             ? "border-red-500 focus:ring-red-500"
                             : "border-gray-300 focus:ring-blue-500"
                         }
-  `}
+          `}
           />
+          <div className="flex justify-between items-center text-xs mt-1">
+            <div className="flex-1">
+              {touched.name && errors.name && (
+                <p className="text-xs text-red-600 mt-1">{errors.name}</p>
+              )}
+            </div>
 
-          {touched.name && errors.name && (
-            <p className="text-xs text-red-600 mt-1">{errors.name}</p>
-          )}
+            {npcValidation.name.maxLength && (
+              <span
+                className={
+                  formData.name.length > npcValidation.name.maxLength
+                    ? "text-red-600"
+                    : "text-gray-500"
+                }
+              >
+                {formData.name.length} / {npcValidation.name.maxLength}
+              </span>
+            )}
+          </div>
         </div>
 
         <div>
@@ -161,14 +183,29 @@ const NpcForm = ({
             className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm
                        focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
-          {errors.role && (
-            <p className="text-xs text-red-600 mt-1">{errors.role}</p>
-          )}
+          <div className="flex justify-between items-center text-xs mt-1">
+            <div className="flex-1">
+              {touched.role && errors.role && (
+                <p className="text-xs text-red-600 mt-1">{errors.role}</p>
+              )}
+            </div>
+            {npcValidation.name.maxLength && (
+              <span
+                className={
+                  formData.role.length > npcValidation.role.maxLength
+                    ? "text-red-600"
+                    : "text-gray-500"
+                }
+              >
+                {formData.role.length} / {npcValidation.role.maxLength}
+              </span>
+            )}
+          </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Descriptor *
+            Descriptor
           </label>
           <input
             name="descriptor"
@@ -177,13 +214,29 @@ const NpcForm = ({
             onBlur={() => {
               handleBlur("descriptor");
             }}
-            required
             className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm
                        focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
-          {errors.descriptor && (
-            <p className="text-xs text-red-600 mt-1">{errors.descriptor}</p>
-          )}
+          <div className="flex justify-between items-center text-xs mt-1">
+            <div className="flex-1">
+              {touched.descriptor && errors.descriptor && (
+                <p className="text-xs text-red-600 mt-1">{errors.descriptor}</p>
+              )}
+            </div>
+            {npcValidation.name.maxLength && (
+              <span
+                className={
+                  formData.descriptor.length >
+                  npcValidation.descriptor.maxLength
+                    ? "text-red-600"
+                    : "text-gray-500"
+                }
+              >
+                {formData.descriptor.length} /{" "}
+                {npcValidation.descriptor.maxLength}
+              </span>
+            )}
+          </div>
         </div>
 
         <div>
@@ -200,9 +253,24 @@ const NpcForm = ({
             className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm
                        focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
-          {errors.race && (
-            <p className="text-xs text-red-600 mt-1">{errors.race}</p>
-          )}
+          <div className="flex justify-between items-center text-xs mt-1">
+            <div className="flex-1">
+              {touched.race && errors.race && (
+                <p className="text-xs text-red-600 mt-1">{errors.race}</p>
+              )}
+            </div>
+            {npcValidation.name.maxLength && (
+              <span
+                className={
+                  formData.race.length > npcValidation.race.maxLength
+                    ? "text-red-600"
+                    : "text-gray-500"
+                }
+              >
+                {formData.race.length} / {npcValidation.race.maxLength}
+              </span>
+            )}
+          </div>
         </div>
 
         <div>
@@ -220,9 +288,24 @@ const NpcForm = ({
             className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm
                        focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
-          {errors.agenda && (
-            <p className="text-xs text-red-600 mt-1">{errors.agenda}</p>
-          )}
+          <div className="flex justify-between items-center text-xs mt-1">
+            <div className="flex-1">
+              {touched.agenda && errors.agenda && (
+                <p className="text-xs text-red-600 mt-1">{errors.agenda}</p>
+              )}
+            </div>
+            {npcValidation.name.maxLength && (
+              <span
+                className={
+                  formData.agenda.length > npcValidation.agenda.maxLength
+                    ? "text-red-600"
+                    : "text-gray-500"
+                }
+              >
+                {formData.agenda.length} / {npcValidation.agenda.maxLength}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
