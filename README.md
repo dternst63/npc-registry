@@ -1,73 +1,57 @@
-# React + TypeScript + Vite
+# NPC Registry
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight NPC (Non-Player Character) management tool designed for tabletop RPG game masters.
 
-Currently, two official plugins are available:
+This project focuses on clean React architecture, predictable state management, and scalable form handling without heavy external libraries.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Create, edit, and delete NPCs
+- Schema-driven form validation
+- Reducer-based modal state management
+- Reusable form components and hooks
+- Clean separation of UI, state, and domain logic
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🧠 Architectural Highlights
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+See [Architecture Overview](docs/architecture.md) for design decisions.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Reducer-driven modal state**  
+  Modal visibility and context are handled via a single reducer instead of boolean flags.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **Custom form hook (`useNpcForm`)**  
+  Encapsulates form state, validation, and submission logic.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **Schema-first validation**  
+  Validation rules drive both UI behavior and form validation logic.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Reusable UI primitives**  
+  Components like `FormField`, `FormActions`, and `ModalShell` are domain-agnostic.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+This project includes a small but intentionally structured backend to demonstrate realistic frontend/backend boundaries.
+
+---
+
+## 🛠 Tech Stack
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Custom validation (no form libraries)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+
+
+### Install
+```bash
+npm install
+
