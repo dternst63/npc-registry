@@ -3,11 +3,12 @@ import { npcValidation } from "../../validation/npcValidation";
 import FormField from "../forms/FormField";
 import FormActions from "../forms/FormActions";
 import { useNpcForm } from "../../hooks/useNpcForm";
+import type { NpcFormData } from "../../types/NpcForm";
 
 interface NpcFormProps {
   initialNpc?: Npc;
   disabled?: boolean;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: NpcFormData) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -44,11 +45,12 @@ const NpcForm = ({
       <FormField
         label="Name"
         name="name"
-        required
+        required={npcValidation.name.required}
+        maxLength={npcValidation.name.maxLength}
+        minLength={npcValidation.name.minLength}
         value={formData.name}
         error={errors.name}
         touched={touched.name}
-        maxLength={npcValidation.name.maxLength}
         disabled={disabled}
         onChange={handleChange}
         onBlur={() => handleBlur("name")}
@@ -57,54 +59,57 @@ const NpcForm = ({
       <FormField
         label="Role"
         name="role"
-        required
+        required={npcValidation.role.required}
+        maxLength={npcValidation.role.maxLength}
+        minLength={npcValidation.role.minLength}
         value={formData.role}
         error={errors.role}
         touched={touched.role}
-        maxLength={npcValidation.role.maxLength}
         disabled={disabled}
         onChange={handleChange}
         onBlur={() => handleBlur("role")}
       />
-
       <FormField
         label="Descriptor"
         name="descriptor"
+        required={npcValidation.descriptor.required}
+        maxLength={npcValidation.descriptor.maxLength}
+        minLength={npcValidation.descriptor.minLength}
         value={formData.descriptor}
         error={errors.descriptor}
         touched={touched.descriptor}
-        maxLength={npcValidation.descriptor.maxLength}
         disabled={disabled}
         onChange={handleChange}
         onBlur={() => handleBlur("descriptor")}
       />
 
       <FormField
-        label="Race / Species"
+        label="Race/Species"
         name="race"
+        required={npcValidation.race.required}
+        maxLength={npcValidation.race.maxLength}
+        minLength={npcValidation.race.minLength}
         value={formData.race}
         error={errors.race}
         touched={touched.race}
-        maxLength={npcValidation.race.maxLength}
         disabled={disabled}
         onChange={handleChange}
         onBlur={() => handleBlur("race")}
       />
 
       <FormField
-        label="Agenda (GM Only)"
+        label="Agenda/Goal"
         name="agenda"
-        as="textarea"
-        rows={3}
+        required={npcValidation.agenda.required}
+        maxLength={npcValidation.agenda.maxLength}
+        minLength={npcValidation.agenda.minLength}
         value={formData.agenda}
         error={errors.agenda}
         touched={touched.agenda}
-        maxLength={npcValidation.agenda.maxLength}
         disabled={disabled}
         onChange={handleChange}
         onBlur={() => handleBlur("agenda")}
       />
-
       <FormActions
         submitLabel={initialNpc ? "Update NPC" : "Create NPC"}
         onCancel={onCancel}

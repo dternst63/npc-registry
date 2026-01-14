@@ -9,6 +9,7 @@ interface FormFieldProps {
   error?: string;
   touched?: boolean;
   maxLength?: number;
+  minLength?: number;
   disabled?: boolean;
   as?: "input" | "textarea";
   rows?: number;
@@ -27,7 +28,8 @@ const FormField = ({
   error,
   touched,
   maxLength,
-  disabled = false,
+  minLength,
+  disabled,
   as = "input",
   rows = 3,
   onChange,
@@ -57,6 +59,8 @@ const FormField = ({
         onChange={onChange}
         onBlur={onBlur}
         disabled={disabled}
+        minLength={minLength}   
+        maxLength={maxLength}   
         rows={as === "textarea" ? rows : undefined}
         className={`${baseClasses} ${borderClasses}`}
       />
