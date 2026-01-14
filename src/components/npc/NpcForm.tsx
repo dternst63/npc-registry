@@ -1,6 +1,7 @@
 import type { Npc } from "../../types/Npc";
 import { npcValidation } from "../../validation/npcValidation";
 import FormField from "../forms/FormField";
+import FormActions from "../forms/FormActions";
 import { useNpcForm } from "../../hooks/useNpcForm";
 
 interface NpcFormProps {
@@ -104,27 +105,14 @@ const NpcForm = ({
         onBlur={() => handleBlur("agenda")}
       />
 
-      <div className="flex justify-end gap-3 pt-6">
-        <button
-          type="button"
-          onClick={onCancel}
-          disabled={disabled}
-          className="rounded border px-4 py-2 text-gray-700 hover:bg-gray-100 disabled:opacity-50"
-        >
-          Cancel
-        </button>
-
-        <button
-          type="submit"
-          disabled={disabled || !isFormValid}
-          className="rounded bg-black px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
-        >
-          {initialNpc ? "Update NPC" : "Create NPC"}
-        </button>
-      </div>
+      <FormActions
+        submitLabel={initialNpc ? "Update NPC" : "Create NPC"}
+        onCancel={onCancel}
+        disabled={disabled}
+        canSubmit={isFormValid}
+      />
     </form>
   );
 };
 
 export default NpcForm;
-
