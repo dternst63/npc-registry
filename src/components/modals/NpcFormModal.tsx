@@ -8,7 +8,6 @@ import type { AsyncStatus } from "../../types/AsyncStatus";
 import LoadingBar from "../ui/LoadingBar";
 
 interface NpcFormModalProps {
-  isOpen: boolean;
   onClose: () => void;
   campaignId: string;
   initialNpc?: Npc;
@@ -16,8 +15,8 @@ interface NpcFormModalProps {
   onSubmitSuccess: (npc: Npc) => void;
 }
 
+
 const NpcFormModal = ({
-  isOpen,
   onClose,
   campaignId,
   initialNpc,
@@ -49,7 +48,7 @@ const NpcFormModal = ({
   };
 
   return (
-    <ModalShell isOpen={isOpen} onClose={onClose} title={title}>
+    <ModalShell onClose={onClose} title={title}>
       <LoadingBar active={status === "submitting"} />
       {status !== "idle" && message && (
         <div

@@ -1,11 +1,11 @@
-// src/components/NpcDashboard.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import type { Npc } from "../../types/Npc";
 import NpcList from "./NpcList";
 import NpcCard from "./NpcCard";
 import NpcFormModal from "../modals/NpcFormModal";
 import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
 import { npcService } from "../../services/npcService";
+import { modalReducer, initialModalState } from "../../reducers/modalReducer";
 
 const CAMPAIGN_ID = "demo"; // replace later with real campaign logic
 
@@ -13,21 +13,9 @@ const NpcDashboard = () => {
   const [npcs, setNpcs] = useState<Npc[]>([]);
   const [selectedNpc, setSelectedNpc] = useState<Npc | null>(null);
 
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [formModalKey, setFormModalKey] = useState(0);
+  const [modalState, dispatch] = useReducer(modalReducer, initialModalState);
 
-  const isModalOpen = isCreateOpen || isEditOpen || isDeleteOpen;
-
-  const openCreateModal = () => {
-    setFormModalKey(Date.now());
-    setIsCreateOpen(true);
-  };
-  const openEditModal = () => {
-    setFormModalKey(Date.now());
-    setIsEditOpen(true);
-  };
+  const isModalOpen = modalState.mode !== "closed";
 
   // -----------------------
   // Data loading
@@ -54,11 +42,9 @@ const NpcDashboard = () => {
   // -----------------------
   // Delete handler
   // -----------------------
-  const handleDelete = async () => {
-    if (!selectedNpc) return;
-
-    await npcService.remove(selectedNpc.id);
-    setNpcs((prev) => prev.filter((n) => n.id !== selectedNpc.id));
+  const handleDelete = async (npc: Npc) => {
+    await npcService.remove(npc.id);
+    setNpcs((prev) => prev.filter((n) => n.id !== npc.id));
     setSelectedNpc(null);
   };
 
@@ -75,7 +61,7 @@ const NpcDashboard = () => {
       {/* Toolbar */}
       <div className="mb-4 flex gap-2">
         <button
-          onClick={openCreateModal}
+          onClick={() => dispatch({ type: "OPEN_CREATE" })}
           disabled={isModalOpen}
           className="rounded bg-black px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
         >
@@ -83,7 +69,9 @@ const NpcDashboard = () => {
         </button>
 
         <button
-          onClick={openEditModal}
+          onClick={() =>
+            selectedNpc && dispatch({ type: "OPEN_EDIT", npc: selectedNpc })
+          }
           disabled={!selectedNpc || isModalOpen}
           className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
         >
@@ -91,11 +79,13 @@ const NpcDashboard = () => {
         </button>
 
         <button
-          onClick={() => setIsDeleteOpen(true)}
+          onClick={() =>
+            selectedNpc && dispatch({ type: "OPEN_DELETE", npc: selectedNpc })
+          }
           disabled={!selectedNpc || isModalOpen}
           className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
         >
-          Delete NPC
+          - Delete NPC
         </button>
       </div>
 
@@ -112,47 +102,54 @@ const NpcDashboard = () => {
       </div>
 
       {/* Create Modal */}
-      <NpcFormModal
-        key={`create-${formModalKey}`}
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        campaignId={CAMPAIGN_ID}
-        title="Create NPC"
-        onSubmitSuccess={(newNpc: Npc) => {
-          setNpcs((prev) => [...prev, newNpc]);
-          setSelectedNpc(newNpc);
-        }}
-      />
+      {modalState.mode === "create" && (
+        <NpcFormModal
+          campaignId={CAMPAIGN_ID}
+          title="Create NPC"
+          onClose={() => dispatch({ type: "CLOSE" })}
+          onSubmitSuccess={(newNpc: Npc) => {
+            setNpcs((prev) => [...prev, newNpc]);
+            setSelectedNpc(newNpc);
+            dispatch({ type: "CLOSE" });
+          }}
+        />
+      )}
 
       {/* Edit Modal */}
-      <NpcFormModal
-        key={`edit-${formModalKey}`}
-        isOpen={isEditOpen}
-        onClose={() => setIsEditOpen(false)}
-        campaignId={CAMPAIGN_ID}
-        initialNpc={selectedNpc ?? undefined}
-        title="Edit NPC"
-        onSubmitSuccess={(updatedNpc: Npc) => {
-          setNpcs((prev) =>
-            prev.map((npc) => (npc.id === updatedNpc.id ? updatedNpc : npc))
-          );
-
-          setSelectedNpc(updatedNpc);
-        }}
-      />
+      {modalState.mode === "edit" && modalState.npc && (
+        <NpcFormModal
+          campaignId={CAMPAIGN_ID}
+          initialNpc={modalState.npc}
+          title="Edit NPC"
+          onClose={() => dispatch({ type: "CLOSE" })}
+          onSubmitSuccess={(updatedNpc: Npc) => {
+            setNpcs((prev) =>
+              prev.map((npc) => (npc.id === updatedNpc.id ? updatedNpc : npc))
+            );
+            setSelectedNpc(updatedNpc);
+            dispatch({ type: "CLOSE" });
+          }}
+        />
+      )}
 
       {/* Delete Modal */}
-      <ConfirmDeleteModal
-        isOpen={isDeleteOpen}
-        onClose={() => setIsDeleteOpen(false)}
-        title="Confirm Delete"
-        onConfirm={handleDelete}
-        message={
-          selectedNpc
-            ? `Delete ${selectedNpc.name}? This cannot be undone.`
-            : "Delete this NPC?"
-        }
-      />
+      {modalState.mode === "confirmDelete" &&
+        modalState.npc &&
+        (() => {
+          const npc = modalState.npc;
+
+          return (
+            <ConfirmDeleteModal
+              title="Confirm Delete"
+              message={`Delete ${npc.name}? This cannot be undone.`}
+              onClose={() => dispatch({ type: "CLOSE" })}
+              onConfirm={async () => {
+                await handleDelete(npc);
+                dispatch({ type: "CLOSE" });
+              }}
+            />
+          );
+        })()}
     </div>
   );
 };

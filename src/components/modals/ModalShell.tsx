@@ -1,15 +1,12 @@
 import type { ReactNode } from "react";
 
 interface ModalShellProps {
-  isOpen: boolean;
   onClose: () => void;
   title?: string;
   children: ReactNode;
 }
 
-const ModalShell = ({ isOpen, onClose, title, children }: ModalShellProps) => {
-  if (!isOpen) return null;
-
+const ModalShell = ({ onClose, title, children }: ModalShellProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}

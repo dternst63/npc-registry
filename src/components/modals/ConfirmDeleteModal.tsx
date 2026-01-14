@@ -4,7 +4,6 @@ import LoadingBar from "../ui/LoadingBar";
 import type { AsyncStatus } from "../../types/AsyncStatus";
 
 interface ConfirmDeleteModalProps {
-  isOpen: boolean;
   onClose: () => void;
   onConfirm: () => Promise<void>;
   title?: string;
@@ -12,7 +11,6 @@ interface ConfirmDeleteModalProps {
 }
 
 const ConfirmDeleteModal = ({
-  isOpen,
   onClose,
   onConfirm,
   title,
@@ -38,7 +36,7 @@ const ConfirmDeleteModal = ({
   };
 
   return (
-    <ModalShell isOpen={isOpen} onClose={handleClose} title={title}>
+    <ModalShell onClose={handleClose} title={title}>
       <LoadingBar active={status === "submitting"} />
       <p className="text-sm text-gray-700">{message}</p>
 
