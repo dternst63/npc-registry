@@ -18,17 +18,41 @@ The goal of this application is clarity, predictability, and long-term maintaina
 
 ## High-Level Structure
 
-src/
-components/
-forms/
-modals/
-npc/
-ui/
-hooks/
-reducers/
-services/
-types/
-validation/
+src
+ ┣ components
+ ┃ ┣ forms
+ ┃ ┃ ┣ FormActions.tsx
+ ┃ ┃ ┗ FormField.tsx
+ ┃ ┣ modals
+ ┃ ┃ ┣ ConfirmDeleteModal.tsx
+ ┃ ┃ ┣ ModalShell.tsx
+ ┃ ┃ ┗ NpcFormModal.tsx
+ ┃ ┣ npc
+ ┃ ┃ ┣ NpcCard.tsx
+ ┃ ┃ ┣ NpcDashboard.tsx
+ ┃ ┃ ┣ NpcForm.tsx
+ ┃ ┃ ┗ NpcList.tsx
+ ┃ ┣ ui
+ ┃ ┃ ┗ LoadingBar.tsx
+ ┃ ┗ Modal.tsx
+ ┣ hooks
+ ┃ ┗ useNpcForm.ts
+ ┣ reducers
+ ┃ ┗ modalReducer.ts
+ ┣ services
+ ┃ ┗ npcService.ts
+ ┣ types
+ ┃ ┣ AsyncStatus.ts
+ ┃ ┣ ModalState.ts
+ ┃ ┣ Npc.ts
+ ┃ ┗ NpcForm.ts
+ ┣ validation
+ ┃ ┣ npcValidateForm.ts
+ ┃ ┗ npcValidation.ts
+ ┣ App.css
+ ┣ App.tsx
+ ┣ index.css
+ ┗ main.tsx
 
 
 Each folder represents a single responsibility:
@@ -81,12 +105,19 @@ It intentionally avoids overengineering.
 
 ## Backend Structure
 
-server/
-models/
-routes/
-utils/
-db.ts
-index.ts
+src
+ ┣ models
+ ┃ ┗ Npc.ts
+ ┣ routes
+ ┃ ┗ npcs.ts
+ ┣ utils
+ ┃ ┗ mapNpc.ts
+ ┣ .env
+ ┣ db.ts
+ ┣ index.ts
+ ┣ package-lock.json
+ ┣ package.json
+ ┗ tsconfig.json
 
 
 Each layer has a clear responsibility:
