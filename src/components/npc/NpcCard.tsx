@@ -1,6 +1,6 @@
 // src/components/NpcCard.tsx
 // src/components/NpcCard.tsx
-import type { Npc } from "../types/Npc";
+import type { Npc } from "../../types/Npc";
 
 interface NpcCardProps {
   npc: Npc | null;
