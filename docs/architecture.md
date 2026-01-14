@@ -79,7 +79,7 @@ Managing multiple modal states with booleans leads to:
 
 All modal state is managed through a reducer:
 
-```ts
+```
 mode: "closed" | "create" | "edit" | "confirmDelete"
 npc: Npc | null
 
