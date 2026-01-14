@@ -1,15 +1,12 @@
-import { useState } from "react";
-import type { Npc } from "../types/Npc";
-import type { NpcFormData, NpcFormField } from "../types/NpcForm";
-import type { NpcFormErrors } from "../validation/validateNpcForm";
-import { validateNpcForm } from "../validation/validateNpcForm";
-import { npcValidation } from "../validation/npcValidation";
-import FormField from "./forms/FormField";
+import type { Npc } from "../../types/Npc";
+import { npcValidation } from "../../validation/npcValidation";
+import FormField from "../forms/FormField";
+import { useNpcForm } from "../../hooks/useNpcForm";
 
 interface NpcFormProps {
   initialNpc?: Npc;
   disabled?: boolean;
-  onSubmit: (data: NpcFormData) => Promise<void>;
+  onSubmit: (data: any) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -19,57 +16,15 @@ const NpcForm = ({
   onSubmit,
   onCancel,
 }: NpcFormProps) => {
-  const [formData, setFormData] = useState<NpcFormData>({
-    name: initialNpc?.name ?? "",
-    role: initialNpc?.role ?? "",
-    descriptor: initialNpc?.descriptor ?? "",
-    race: initialNpc?.race ?? "",
-    agenda: initialNpc?.agenda ?? "",
-  });
-
-  const [errors, setErrors] = useState<NpcFormErrors>({});
-  const [touched, setTouched] = useState<
-    Partial<Record<NpcFormField, boolean>>
-  >({});
-
-  const getAllFieldsTouched = () => ({
-    name: true,
-    role: true,
-    descriptor: true,
-    race: true,
-    agenda: true,
-  });
-
-  const isFormValid = Object.keys(validateNpcForm(formData)).length === 0;
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleBlur = (field: NpcFormField) => {
-    const validationErrors = validateNpcForm(formData);
-
-    setTouched((prev) => ({ ...prev, [field]: true }));
-    setErrors((prev) => ({
-      ...prev,
-      [field]: validationErrors[field],
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const validationErrors = validateNpcForm(formData);
-    setErrors(validationErrors);
-    setTouched(getAllFieldsTouched());
-
-    if (Object.keys(validationErrors).length > 0) return;
-
-    await onSubmit(formData);
-  };
+  const {
+    formData,
+    errors,
+    touched,
+    isFormValid,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+  } = useNpcForm({ initialNpc, onSubmit });
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
@@ -85,7 +40,6 @@ const NpcForm = ({
         </p>
       </div>
 
-      {/* Name */}
       <FormField
         label="Name"
         name="name"
@@ -99,7 +53,6 @@ const NpcForm = ({
         onBlur={() => handleBlur("name")}
       />
 
-      {/* Role */}
       <FormField
         label="Role"
         name="role"
@@ -113,7 +66,6 @@ const NpcForm = ({
         onBlur={() => handleBlur("role")}
       />
 
-      {/* Descriptor */}
       <FormField
         label="Descriptor"
         name="descriptor"
@@ -126,7 +78,6 @@ const NpcForm = ({
         onBlur={() => handleBlur("descriptor")}
       />
 
-      {/* Race */}
       <FormField
         label="Race / Species"
         name="race"
@@ -139,7 +90,6 @@ const NpcForm = ({
         onBlur={() => handleBlur("race")}
       />
 
-      {/* Agenda */}
       <FormField
         label="Agenda (GM Only)"
         name="agenda"
@@ -154,7 +104,6 @@ const NpcForm = ({
         onBlur={() => handleBlur("agenda")}
       />
 
-      {/* Actions */}
       <div className="flex justify-end gap-3 pt-6">
         <button
           type="button"
@@ -168,8 +117,7 @@ const NpcForm = ({
         <button
           type="submit"
           disabled={disabled || !isFormValid}
-          className="rounded bg-black px-4 py-2 text-white
-                     hover:bg-gray-800 disabled:opacity-50"
+          className="rounded bg-black px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
         >
           {initialNpc ? "Update NPC" : "Create NPC"}
         </button>
@@ -179,3 +127,4 @@ const NpcForm = ({
 };
 
 export default NpcForm;
+

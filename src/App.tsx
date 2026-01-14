@@ -1,4 +1,4 @@
-import NpcDashboard from "./components/NpcDashboard";
+import NpcDashboard from "./components/npc/NpcDashboard";
 
 function App() {
   return <NpcDashboard />;

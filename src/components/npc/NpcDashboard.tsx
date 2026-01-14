@@ -1,10 +1,11 @@
 // src/components/NpcDashboard.tsx
 import { useEffect, useState } from "react";
-import type { Npc } from "../types/Npc";
+import type { Npc } from "../../types/Npc";
 import NpcList from "./NpcList";
 import NpcCard from "./NpcCard";
-import NpcFormModal from "./modals/NpcFormModal";
-import ConfirmDeleteModal from "./modals/ConfirmDeleteModal";
+import NpcFormModal from "../modals/NpcFormModal";
+import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
+import { npcService } from "../../services/npcService";
 
 const CAMPAIGN_ID = "demo"; // replace later with real campaign logic
 
@@ -15,47 +16,48 @@ const NpcDashboard = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [formModalKey, setFormModalKey] = useState(0);
 
   const isModalOpen = isCreateOpen || isEditOpen || isDeleteOpen;
+
+  const openCreateModal = () => {
+    setFormModalKey(Date.now());
+    setIsCreateOpen(true);
+  };
+  const openEditModal = () => {
+    setFormModalKey(Date.now());
+    setIsEditOpen(true);
+  };
 
   // -----------------------
   // Data loading
   // -----------------------
-  const refreshNpcs = async () => {
-    try {
-      const res = await fetch("http://localhost:3001/api/npcs");
-      const data: Npc[] = await res.json();
-      setNpcs(data);
-    } catch (err) {
-      console.error("Failed to load NPCs", err);
-    }
-  };
-
   useEffect(() => {
-    refreshNpcs();
+    let active = true;
+
+    (async () => {
+      try {
+        const data = await npcService.getAll();
+        if (active) {
+          setNpcs(data);
+        }
+      } catch (err) {
+        console.error("Failed to load NPCs", err);
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
   }, []);
-
-  // -----------------------
-  // Update handler
-  // -----------------------
-  const handleNpcUpdated = (updatedNpc: Npc) => {
-    setNpcs((prev) =>
-      prev.map((npc) => (npc.id === updatedNpc.id ? updatedNpc : npc))
-    );
-
-    setSelectedNpc(updatedNpc);
-  };
 
   // -----------------------
   // Delete handler
   // -----------------------
-  const deleteSelectedNpc = async () => {
-    if (!selectedNpc?.id) return;
+  const handleDelete = async () => {
+    if (!selectedNpc) return;
 
-    await fetch(`http://localhost:3001/api/npcs/${selectedNpc.id}`, {
-      method: "DELETE",
-    });
-
+    await npcService.remove(selectedNpc.id);
     setNpcs((prev) => prev.filter((n) => n.id !== selectedNpc.id));
     setSelectedNpc(null);
   };
@@ -73,7 +75,7 @@ const NpcDashboard = () => {
       {/* Toolbar */}
       <div className="mb-4 flex gap-2">
         <button
-          onClick={() => setIsCreateOpen(true)}
+          onClick={openCreateModal}
           disabled={isModalOpen}
           className="rounded bg-black px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
         >
@@ -81,7 +83,7 @@ const NpcDashboard = () => {
         </button>
 
         <button
-          onClick={() => setIsEditOpen(true)}
+          onClick={openEditModal}
           disabled={!selectedNpc || isModalOpen}
           className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
         >
@@ -111,6 +113,7 @@ const NpcDashboard = () => {
 
       {/* Create Modal */}
       <NpcFormModal
+        key={`create-${formModalKey}`}
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         campaignId={CAMPAIGN_ID}
@@ -123,6 +126,7 @@ const NpcDashboard = () => {
 
       {/* Edit Modal */}
       <NpcFormModal
+        key={`edit-${formModalKey}`}
         isOpen={isEditOpen}
         onClose={() => setIsEditOpen(false)}
         campaignId={CAMPAIGN_ID}
@@ -141,7 +145,8 @@ const NpcDashboard = () => {
       <ConfirmDeleteModal
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
-        onConfirm={deleteSelectedNpc}
+        title="Confirm Delete"
+        onConfirm={handleDelete}
         message={
           selectedNpc
             ? `Delete ${selectedNpc.name}? This cannot be undone.`

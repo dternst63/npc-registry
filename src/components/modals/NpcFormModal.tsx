@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import ModalShell from "./ModalShell";
-import NpcForm from "../NpcForm";
+import NpcForm from "../npc/NpcForm";
 import type { Npc } from "../../types/Npc";
 import type { NpcFormData } from "../../types/NpcForm";
+import { npcService } from "../../services/npcService";
 import type { AsyncStatus } from "../../types/AsyncStatus";
 import LoadingBar from "../ui/LoadingBar";
 
@@ -15,10 +16,6 @@ interface NpcFormModalProps {
   onSubmitSuccess: (npc: Npc) => void;
 }
 
-const sleep = (ms: number) =>
-  new Promise(resolve => setTimeout(resolve, ms));
-
-
 const NpcFormModal = ({
   isOpen,
   onClose,
@@ -30,47 +27,22 @@ const NpcFormModal = ({
   const [status, setStatus] = useState<AsyncStatus>("idle");
   const [message, setMessage] = useState<string | null>(null);
 
-  const prevIsOpen = useRef(false);
-
-  useEffect(() => {
-    if (isOpen && !prevIsOpen.current) {
-      setStatus("idle");
-      setMessage(null);
-    }
-
-    prevIsOpen.current = isOpen;
-  }, [isOpen]);
-
+  
   const handleSubmit = async (data: NpcFormData) => {
     try {
       setStatus("submitting");
       setMessage("Saving NPC…");
 
-      // 🔧 DEV-ONLY DELAY (remove later)
-      await sleep(1500);
+      const savedNpc = initialNpc
+        ? await npcService.update(initialNpc.id, campaignId, data)
+        : await npcService.create(campaignId, data);
 
-      const url = initialNpc?.id
-        ? `http://localhost:3001/api/npcs/${initialNpc.id}`
-        : `http://localhost:3001/api/npcs`;
-
-      const method = initialNpc ? "PUT" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, campaignId }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Save failed");
-      }
-
-      const savedNpc: Npc = await res.json();
       onSubmitSuccess(savedNpc);
 
       setStatus("success");
       setMessage("NPC saved successfully.");
-    } catch {
+    } catch (err) {
+      console.error(err);
       setStatus("error");
       setMessage("Failed to save NPC.");
     }

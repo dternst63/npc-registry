@@ -4,7 +4,15 @@ import { mapNpc } from "../utils/mapNpc.js";
 
 const router = Router();
 
-function validateNpcPayload(body: any) {
+type NpcPayload = {
+  name?: string;
+  role?: string;
+  descriptor?: string;
+  agenda?: string;
+};
+
+
+function validateNpcPayload(body: NpcPayload) {
   if (!body.name || body.name.length < 2) return "Invalid name";
   if (!body.role || body.role.length < 2) return "Invalid role";
   if (!body.descriptor || body.descriptor.length < 3)

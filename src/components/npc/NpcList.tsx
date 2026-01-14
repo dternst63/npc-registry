@@ -1,6 +1,6 @@
 // src/components/NpcList.tsx
 // src/components/NpcList.tsx
-import type { Npc } from "../types/Npc";
+import type { Npc } from "../../types/Npc";
 
 interface NpcListProps {
   npcs: Npc[];

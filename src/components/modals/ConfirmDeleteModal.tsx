@@ -15,7 +15,7 @@ const ConfirmDeleteModal = ({
   isOpen,
   onClose,
   onConfirm,
-  title = "Confirm Delete",
+  title,
   message = "Are you sure you want to delete this item? This action cannot be undone.",
 }: ConfirmDeleteModalProps) => {
   const [status, setStatus] = useState<AsyncStatus>("idle");
