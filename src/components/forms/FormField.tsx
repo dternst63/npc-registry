@@ -72,10 +72,10 @@ const FormField = ({
           )}
         </div>
 
-        {maxLength !== undefined && (
+        {minLength !== undefined && (
           <span
             className={
-              count > maxLength
+              count < minLength && touched
                 ? "text-red-600"
                 : "text-gray-500"
             }
