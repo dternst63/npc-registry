@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ModalShell from "./ModalShell";
+import ModalShell from "../ModalShell";
 import LoadingBar from "../ui/LoadingBar";
 import type { AsyncStatus } from "../../types/AsyncStatus";
 

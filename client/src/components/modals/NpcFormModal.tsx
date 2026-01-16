@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ModalShell from "./ModalShell";
+import ModalShell from "../ModalShell";
 import NpcForm from "../npc/NpcForm";
 import type { Npc } from "../../types/Npc";
 import type { NpcFormData } from "../../types/NpcForm";

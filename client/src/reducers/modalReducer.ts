@@ -6,6 +6,7 @@ type ModalAction =
   | { type: "OPEN_CREATE" }
   | { type: "OPEN_EDIT"; npc: Npc }
   | { type: "OPEN_DELETE"; npc: Npc }
+  | { type: "OPEN_GM_SECRETS"; npc: Npc }
   | { type: "CLOSE" };
 
 export const initialModalState: ModalState = {
@@ -26,6 +27,9 @@ export function modalReducer(
 
     case "OPEN_DELETE":
       return { mode: "confirmDelete", npc: action.npc };
+
+    case "OPEN_GM_SECRETS":
+      return { mode: "gmSecrets", npc: action.npc };
 
     case "CLOSE":
       return initialModalState;

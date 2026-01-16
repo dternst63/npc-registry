@@ -6,6 +6,7 @@ import NpcFormModal from "../modals/NpcFormModal";
 import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
 import { npcService } from "../../services/npcService";
 import { modalReducer, initialModalState } from "../../reducers/modalReducer";
+import GmSecretsModal from "../gm/GmSecretsModal";
 
 const CAMPAIGN_ID = "demo"; // replace later with real campaign logic
 
@@ -87,6 +88,16 @@ const NpcDashboard = () => {
         >
           - Delete NPC
         </button>
+        <button
+          onClick={() =>
+            selectedNpc &&
+            dispatch({ type: "OPEN_GM_SECRETS", npc: selectedNpc })
+          }
+          disabled={!selectedNpc || isModalOpen}
+          className="rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700 disabled:opacity-50"
+        >
+          GM Secrets
+        </button>
       </div>
 
       {/* Main Content */}
@@ -150,6 +161,14 @@ const NpcDashboard = () => {
             />
           );
         })()}
+      {/*GM Secrets Modal */}
+      {modalState.mode === "gmSecrets" && modalState.npc && (
+        <GmSecretsModal
+          npcId={modalState.npc.id}
+          isOpen={true}
+          onClose={() => dispatch({ type: "CLOSE" })}
+        />
+      )}
     </div>
   );
 };

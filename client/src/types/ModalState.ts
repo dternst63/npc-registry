@@ -5,7 +5,8 @@ export type ModalMode =
   | "closed"
   | "create"
   | "edit"
-  | "confirmDelete";
+  | "confirmDelete"
+  | "gmSecrets";
 
 export interface ModalState {
   mode: ModalMode;
