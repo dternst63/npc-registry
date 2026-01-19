@@ -17,9 +17,7 @@ export default function GmSecretItem({ npcId, secret, setSecrets }: Props) {
     try {
       await deleteNpcSecret(npcId, secret._id);
 
-      setSecrets((prev) =>
-        prev.filter((s) => s._id !== secret._id)
-      );
+      setSecrets((prev) => prev.filter((s) => s._id !== secret._id));
     } catch (err) {
       console.error("Delete failed:", err);
     }
@@ -30,10 +28,8 @@ export default function GmSecretItem({ npcId, secret, setSecrets }: Props) {
   const toggleReveal = () => {
     setSecrets((prev) =>
       prev.map((s) =>
-        s._id === secret._id
-          ? { ...s, revealed: !s.revealed }
-          : s
-      )
+        s._id === secret._id ? { ...s, revealed: !s.revealed } : s,
+      ),
     );
   };
 
@@ -50,12 +46,9 @@ export default function GmSecretItem({ npcId, secret, setSecrets }: Props) {
 
       setSecrets((prev) =>
         prev.map((s) =>
-          s._id === result.updatedSecret._id
-            ? result.updatedSecret
-            : s
-        )
+          s._id === result.updatedSecret._id ? result.updatedSecret : s,
+        ),
       );
-
     } catch (err) {
       console.error("Analyze error:", err);
     }
@@ -63,7 +56,9 @@ export default function GmSecretItem({ npcId, secret, setSecrets }: Props) {
 
   return (
     <div className="border p-2 mb-2">
-      <p>{secret.text}</p>
+      <p className={secret.revealed ? "" : "italic text-gray-400"}>
+        {secret.revealed ? secret.text : "Secret Hidden"}
+      </p>
 
       <div className="flex justify-between items-center text-sm mt-1">
         <div className="flex items-center gap-2">
@@ -80,8 +75,8 @@ export default function GmSecretItem({ npcId, secret, setSecrets }: Props) {
                   percent >= 75
                     ? "#16a34a"
                     : percent >= 50
-                    ? "#a855f7"
-                    : "#f59e0b",
+                      ? "#a855f7"
+                      : "#f59e0b",
               }}
             />
           </div>
