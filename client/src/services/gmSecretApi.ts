@@ -53,3 +53,20 @@ export async function analyzeNpcSecret(
   return res.json();
 }
 
+export async function generateNpcSecret(npcId: string) {
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/npcs/${npcId}/secrets/generate`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" }
+    }
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Secret generation failed");
+  }
+
+  return data;
+}

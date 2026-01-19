@@ -27,6 +27,7 @@ app.use("/api/npcs", npcSecretsRoutes);
 app.use("/api/npcs", secretAnalysisRoutes);
 app.use("/api/npcs", secretGeneratorRoutes);
 
+console.log("Starting NPC API...");
 
 app.listen(PORT, () => {
   console.log(`NPC API running on http://localhost:${PORT}`);

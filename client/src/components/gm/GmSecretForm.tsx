@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+
+
 export default function GmSecretForm({ onAdd }: any) {
   const [text, setText] = useState("");
   const [category, setCategory] = useState("unknown");
@@ -34,7 +36,7 @@ export default function GmSecretForm({ onAdd }: any) {
           <option value="danger">Danger</option>
         </select>
 
-        <button onClick={submit}>Add</button>
+        <button onClick={submit}  className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-800">Add</button>
       </div>
     </div>
   );
