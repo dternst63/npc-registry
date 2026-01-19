@@ -5,3 +5,6 @@ export interface GmSecret {
   confidence: number;
   revealed: boolean;
 }
+export interface SecretsResponse {
+  secrets: GmSecret[];
+}

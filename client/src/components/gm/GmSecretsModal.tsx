@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ModalShell from "../ModalShell";
 import {
   getNpcSecrets,
@@ -7,7 +7,7 @@ import {
 } from "../../services/gmSecretApi";
 import GmSecretList from "./GmSecretList";
 import GmSecretForm from "./GmSecretForm";
-import type { GmSecret } from "../../types/GmSecrets";
+import type { GmSecret } from "../../types/GmSecret";
 
 interface Props {
   npcId: string;
@@ -19,7 +19,7 @@ export default function GmSecretsModal({ npcId, isOpen, onClose }: Props) {
   const [secrets, setSecrets] = useState<GmSecret[]>([]);
   const [generating, setGenerating] = useState(false);
   const [loading, setLoading] = useState(false);
-  const loadSecrets = async () => {
+  const loadSecrets = useCallback(async () => {
     setLoading(true);
 
     try {
@@ -37,17 +37,17 @@ export default function GmSecretsModal({ npcId, isOpen, onClose }: Props) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [npcId]);
 
   useEffect(() => {
     if (isOpen) {
       loadSecrets();
     }
-  }, [npcId, isOpen]);
+  }, [isOpen, loadSecrets]);
 
-  const handleAdd = async (payload: any) => {
+  const handleAdd = async (payload: { text: string; category: string }) => {
     const updated = await addNpcSecret(npcId, payload);
-    setSecrets(updated);
+    setSecrets(updated.secrets);
   };
 
   const handleGenerateSecret = async () => {
