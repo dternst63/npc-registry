@@ -14,24 +14,38 @@ router.post("/:npcId/secrets/generate", async (req, res) => {
       return res.status(404).json({ error: "NPC not found" });
     }
 
-    const response = await fetch("http://127.0.0.1:8000/generate-secret", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        npc_name: npc.name,
-        role: npc.role,
-        race: npc.race,
-        preset,
-      }),
-    });
+    let generated;
+    let attempts = 0;
+    const MAX_ATTEMPTS = 5;
 
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error("Narrative engine error:", errText);
-      return res.status(500).json({ error: "Generator engine failed" });
+    while (attempts < MAX_ATTEMPTS) {
+      const response = await fetch("http://127.0.0.1:8000/generate-secret", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          npc_name: npc.name,
+          role: npc.role,
+          race: npc.race,
+          preset,
+        }),
+      });
+
+      generated = await response.json();
+
+      const isDuplicate = npc.gmSecrets.secrets.some(
+        (s) => s.text === generated.text,
+      );
+
+      if (!isDuplicate) break;
+
+      attempts++;
     }
 
-    const generated = await response.json();
+    if (attempts === MAX_ATTEMPTS) {
+      return res.status(409).json({
+        error: "Generator exhausted unique results",
+      });
+    }
 
     // HARD VALIDATION GUARD
     if (!generated.text) {
@@ -41,6 +55,19 @@ router.post("/:npcId/secrets/generate", async (req, res) => {
 
     npc.gmSecrets ??= { enabled: true, secrets: [] };
 
+    // ---------- DUPLICATE SAFETY CHECK ----------
+
+    const isDuplicate = npc.gmSecrets.secrets.some(
+      (s) => s.text === generated.text,
+    );
+
+    if (isDuplicate) {
+      return res.status(409).json({
+        error: "Duplicate secret generated",
+      });
+    }
+
+    // ---------- SAVE NEW SECRET ----------
     npc.gmSecrets.secrets.push({
       text: generated.text,
       category: generated.category || "unknown",

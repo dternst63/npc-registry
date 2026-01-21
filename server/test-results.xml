@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="5" failures="0" errors="0" time="3.8255284">
+    <testsuite name="tests/npc.test.ts" timestamp="2026-01-20T15:40:33.292Z" hostname="DESKTOP-S2Q0QHM" tests="2" failures="0" errors="0" skipped="0" time="1.0326569">
+        <testcase classname="tests/npc.test.ts" name="NPC CRUD API &gt; creates NPC" time="0.1188502">
+        </testcase>
+        <testcase classname="tests/npc.test.ts" name="NPC CRUD API &gt; fetches NPC list" time="0.0126197">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/secrets.analyzer.test.ts" timestamp="2026-01-20T15:40:33.293Z" hostname="DESKTOP-S2Q0QHM" tests="1" failures="0" errors="0" skipped="0" time="0.7110199">
+        <testcase classname="tests/secrets.analyzer.test.ts" name="placeholder &gt; pending" time="0.0009717">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/secrets.crud.test.ts" timestamp="2026-01-20T15:40:33.294Z" hostname="DESKTOP-S2Q0QHM" tests="1" failures="0" errors="0" skipped="0" time="1.0331439">
+        <testcase classname="tests/secrets.crud.test.ts" name="GM Secret Manual CRUD &gt; adds secret to NPC" time="0.181173">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/secrets.generator.test.ts" timestamp="2026-01-20T15:40:33.294Z" hostname="DESKTOP-S2Q0QHM" tests="1" failures="0" errors="0" skipped="0" time="1.0487077">
+        <testcase classname="tests/secrets.generator.test.ts" name="GM Secret Generator &gt; generates and saves secret" time="0.1404737">
+        </testcase>
+    </testsuite>
+</testsuites>

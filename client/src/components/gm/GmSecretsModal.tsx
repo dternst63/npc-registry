@@ -47,7 +47,13 @@ export default function GmSecretsModal({ npcId, isOpen, onClose }: Props) {
 
   const handleAdd = async (payload: { text: string; category: string }) => {
     const updated = await addNpcSecret(npcId, payload);
-    setSecrets(updated.secrets);
+    if (Array.isArray(updated.secrets)) {
+      setSecrets(updated.secrets);
+    } else if (Array.isArray(updated)) {
+      setSecrets(updated);
+    } else {
+      console.error("Invalid add response:", updated);
+    }
   };
 
   const handleGenerateSecret = async () => {
@@ -55,6 +61,11 @@ export default function GmSecretsModal({ npcId, isOpen, onClose }: Props) {
       setGenerating(true);
 
       const data = await generateNpcSecret(npcId);
+
+      if (!data) {
+        alert("All unique secrets for this category have been generated.");
+        return;
+      }
 
       if (Array.isArray(data.secrets)) {
         setSecrets(data.secrets);

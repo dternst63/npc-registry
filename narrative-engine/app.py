@@ -2,6 +2,12 @@ print("APP.PY LOADED — GENERATOR VERSION")
 from fastapi import FastAPI
 from pydantic import BaseModel
 import random
+from collections import defaultdict
+
+# Store recent secrets per NPC+category
+recent_secrets = defaultdict(list)
+
+MAX_MEMORY = 5
 
 app = FastAPI()
 
@@ -115,7 +121,26 @@ def generate_secret(payload: GenerateRequest):
     }
 
     pool = templates.get(payload.preset, templates["random"])
-    secret_text = random.choice(pool)
+
+    # ---------- Deduplication Memory ----------
+
+    memory_key = f"{payload.npc_name}:{payload.preset}"
+    used = recent_secrets[memory_key]
+
+    available = [s for s in pool if s not in used]
+
+    # Reset memory if pool exhausted
+    if not available:
+        recent_secrets[memory_key] = []
+        available = pool
+
+    secret_text = random.choice(available)
+
+    # Update memory (rolling window)
+    recent_secrets[memory_key].append(secret_text)
+    recent_secrets[memory_key] = recent_secrets[memory_key][-MAX_MEMORY:]
+
+    # ---------- Category Mapping ----------
 
     category_map = {
         "political": "agenda",
@@ -130,4 +155,3 @@ def generate_secret(payload: GenerateRequest):
         "category": category_map.get(payload.preset, "unknown"),
         "confidence": round(random.uniform(0.6, 0.9), 2),
     }
-

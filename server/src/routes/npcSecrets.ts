@@ -1,27 +1,36 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
+import mongoose from "mongoose";
 import Npc from "../models/Npc";
 
 const router = Router();
 
+const isValidObjectId = (id: string) => mongoose.Types.ObjectId.isValid(id);
+
 /**
- * GET all GM secrets for an NPC
- * (GM-only conceptually)
+ * GET secrets
  */
-router.get("/:npcId/secrets", async (req: Request, res: Response) => {
+router.get("/:npcId/secrets", async (req, res) => {
   const { npcId } = req.params;
 
-  const npc = await Npc.findById(npcId).select("gmSecrets");
+  if (!isValidObjectId(npcId)) {
+    return res.status(400).json({ error: "Invalid NPC ID" });
+  }
+
+  const npc = await Npc.findById(npcId).lean();
+
   if (!npc) {
     return res.status(404).json({ error: "NPC not found" });
   }
 
-  res.json(npc.gmSecrets ?? { enabled: false, secrets: [] });
+  const secrets = npc.gmSecrets?.secrets ?? [];
+
+  res.status(200).json({ secrets });
 });
 
 /**
- * ADD a GM secret to an NPC
+ * CREATE secret
  */
-router.post("/:npcId/secrets", async (req: Request, res: Response) => {
+router.post("/:npcId/secrets", async (req, res) => {
   const { npcId } = req.params;
   const { text, category } = req.body;
 
@@ -29,7 +38,12 @@ router.post("/:npcId/secrets", async (req: Request, res: Response) => {
     return res.status(400).json({ error: "Secret text is required" });
   }
 
+  if (!isValidObjectId(npcId)) {
+    return res.status(400).json({ error: "Invalid NPC ID" });
+  }
+
   const npc = await Npc.findById(npcId);
+
   if (!npc) {
     return res.status(404).json({ error: "NPC not found" });
   }
@@ -37,60 +51,81 @@ router.post("/:npcId/secrets", async (req: Request, res: Response) => {
   npc.gmSecrets ??= { enabled: true, secrets: [] };
   npc.gmSecrets.enabled = true;
 
-  npc.gmSecrets.secrets.push({
-    text,
-    category,
-  });
+  npc.gmSecrets.secrets.push({ text, category });
 
   await npc.save();
 
-  res.status(201).json(npc.gmSecrets.secrets);
+  // Return the FULL NPC object so subdocument IDs are populated
+  const savedNpc = await Npc.findById(npcId);
+
+  res.status(201).json({
+    secrets: savedNpc?.gmSecrets?.secrets ?? [],
+  });
 });
 
 /**
- * UPDATE a GM secret
+ * UPDATE secret
  */
-router.patch(
-  "/:npcId/secrets/:secretId",
-  async (req: Request, res: Response) => {
-    const { npcId, secretId } = req.params;
-    const updates = req.body;
+router.patch("/:npcId/secrets/:secretId", async (req, res) => {
+  const { npcId, secretId } = req.params;
 
-    const npc = await Npc.findById(npcId);
-    if (!npc || !npc.gmSecrets) {
-      return res.status(404).json({ error: "NPC or secrets not found" });
-    }
-
-    const secret = npc.gmSecrets.secrets.id(secretId);
-    if (!secret) {
-      return res.status(404).json({ error: "Secret not found" });
-    }
-
-    Object.assign(secret, updates);
-    await npc.save();
-
-    res.json(secret);
+  if (!isValidObjectId(npcId)) {
+    return res.status(400).json({ error: "Invalid NPC ID" });
   }
-);
+
+  if (!isValidObjectId(secretId)) {
+    return res.status(404).json({ error: "Secret not found" });
+  }
+
+  const npc = await Npc.findById(npcId);
+
+  if (!npc || !npc.gmSecrets) {
+    return res.status(404).json({ error: "NPC or secrets not found" });
+  }
+
+  const secret = npc.gmSecrets.secrets.id(secretId);
+
+  if (!secret) {
+    return res.status(404).json({ error: "Secret not found" });
+  }
+
+  Object.assign(secret, req.body);
+
+  await npc.save();
+
+  res.status(200).json(secret);
+});
 
 /**
- * DELETE a GM secret
+ * DELETE secret
  */
-router.delete(
-  "/:npcId/secrets/:secretId",
-  async (req: Request, res: Response) => {
-    const { npcId, secretId } = req.params;
+router.delete("/:npcId/secrets/:secretId", async (req, res) => {
+  const { npcId, secretId } = req.params;
 
-    const npc = await Npc.findById(npcId);
-    if (!npc || !npc.gmSecrets) {
-      return res.status(404).json({ error: "NPC or secrets not found" });
-    }
-
-    npc.gmSecrets.secrets.id(secretId)?.deleteOne();
-    await npc.save();
-
-    res.status(204).send();
+  if (!isValidObjectId(npcId)) {
+    return res.status(400).json({ error: "Invalid NPC ID" });
   }
-);
+
+  if (!isValidObjectId(secretId)) {
+    return res.status(404).json({ error: "Secret not found" });
+  }
+
+  const npc = await Npc.findById(npcId);
+
+  if (!npc || !npc.gmSecrets) {
+    return res.status(404).json({ error: "NPC or secrets not found" });
+  }
+
+  const secret = npc.gmSecrets.secrets.id(secretId);
+
+  if (!secret) {
+    return res.status(404).json({ error: "Secret not found" });
+  }
+
+  secret.deleteOne();
+  await npc.save();
+
+  res.status(204).send();
+});
 
 export default router;

@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "test": "cross-env NODE_ENV=test vitest",
+    "test:ci": "cross-env NODE_ENV=test vitest --run",
+    "test:coverage": "cross-env NODE_ENV=test vitest run --coverage"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -19,8 +22,14 @@
     "@types/express": "^4.17.21",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^20.11.0",
+    "@types/supertest": "^6.0.3",
+    "@vitest/coverage-v8": "^4.0.17",
+    "cross-env": "^10.1.0",
+    "mongodb-memory-server": "^11.0.1",
+    "supertest": "^7.2.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^4.0.17"
   }
 }

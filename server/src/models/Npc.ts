@@ -46,7 +46,7 @@ const GmSecretSchema = new Schema<IGmSecret>(
       default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const NpcSchema = new Schema<INpc>(
@@ -64,9 +64,7 @@ const NpcSchema = new Schema<INpc>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-
-
-export default mongoose.model<INpc>("Npc", NpcSchema);
+export default mongoose.models.Npc || mongoose.model<INpc>("Npc", NpcSchema);

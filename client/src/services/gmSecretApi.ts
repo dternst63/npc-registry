@@ -20,8 +20,7 @@ export async function getNpcSecrets(npcId: string): Promise<SecretsResponse> {
 
 export async function addNpcSecret(
   npcId: string,
-  payload: { text: string; category: string }
-,
+  payload: { text: string; category: string },
 ): Promise<SecretsResponse> {
   const res = await fetch(`${BASE_URL}/api/npcs/${npcId}/secrets`, {
     method: "POST",
@@ -109,16 +108,22 @@ export async function analyzeNpcSecret(
 
 export async function generateNpcSecret(
   npcId: string,
-): Promise<SecretsResponse> {
+): Promise<SecretsResponse | null> {
   const res = await fetch(`${BASE_URL}/api/npcs/${npcId}/secrets/generate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
   });
 
-  const data: SecretsResponse = await res.json();
+  const data = await res.json();
+
+  // Handle exhausted pool gracefully
+  if (res.status === 409) {
+    console.warn(data.error);
+    return null;
+  }
 
   if (!res.ok) {
-    throw new Error("Secret generation failed");
+    throw new Error(data.error || "Secret generation failed");
   }
 
   return data;
