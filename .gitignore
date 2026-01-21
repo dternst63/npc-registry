@@ -20,3 +20,12 @@ Thumbs.db
 
 # test coverage
 coverage/
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Coverage
+htmlcov/
+.coverage
