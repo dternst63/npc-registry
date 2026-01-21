@@ -10,11 +10,21 @@ from analysis import (
     summarize_findings,
 )
 
+
+# -------------------------
+# Safe JSON loader (legacy log protection)
+# -------------------------
+
 def safe_json_load(raw):
     try:
         return json.loads(raw)
     except Exception:
         return None
+
+
+# -------------------------
+# Main entrypoint
+# -------------------------
 
 def main():
     parser = argparse.ArgumentParser(description="System Hardening Security Probe")
@@ -28,22 +38,23 @@ def main():
     args = parser.parse_args()
 
     # -------------------------
-    # Ensure log directory exists
+    # Ensure directories exist
     # -------------------------
 
     log_dir = os.path.dirname(args.log_path)
     if log_dir:
         os.makedirs(log_dir, exist_ok=True)
 
+    os.makedirs("output", exist_ok=True)
+
     # -------------------------
-    # Load previous records safely
+    # Load previous scan records
     # -------------------------
 
     previous_raw, current_raw = read_last_two_records(args.log_path)
 
     previous = safe_json_load(previous_raw) if previous_raw else None
     current = safe_json_load(current_raw) if current_raw else None
-
 
     if previous is None:
         print("First run detected — no previous baseline found")
@@ -61,28 +72,37 @@ def main():
     processed = process_ss(snapshot)
 
     # -------------------------
-    # Analyze changes
+    # Analyze risk changes
     # -------------------------
 
     findings = analyze_risk_changes(previous, processed)
     results = summarize_findings(findings)
 
     # -------------------------
-    # Persist new snapshot
+    # Persist new baseline record
     # -------------------------
 
     with open(args.log_path, "a") as f:
         f.write(json.dumps(processed) + "\n")
 
     # -------------------------
-    # CI enforcement
+    # Save CI artifact report
+    # -------------------------
+
+    with open("output/security_report.json", "w") as f:
+        json.dump(results, f, indent=2)
+
+    # -------------------------
+    # CI enforcement gate
     # -------------------------
 
     if results.get("critical", False):
         print("\nCRITICAL SECURITY ISSUES DETECTED:\n")
 
         for issue in results.get("critical_issues", []):
-            print(f"- {issue.get('finding')} ({issue.get('category', 'unknown')})")
+            category = issue.get("category", "unknown")
+            finding = issue.get("finding", "unknown_issue")
+            print(f"- {finding} ({category})")
 
         exit(1)
 
