@@ -1,10 +1,7 @@
 name: Narrative Engine Tests
 
 on:
-  push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
+  workflow_call:
 
 jobs:
   narrative-engine-tests:

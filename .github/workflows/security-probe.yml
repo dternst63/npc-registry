@@ -1,10 +1,7 @@
 name: Security Hardening Probe
 
 on:
-  push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
+  workflow_call:
 
 jobs:
   security-probe:

@@ -1,10 +1,7 @@
 name: Server API Tests
 
 on:
-  push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
+  workflow_call:
 
 jobs:
   server-tests:
