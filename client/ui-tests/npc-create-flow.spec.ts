@@ -31,8 +31,9 @@ test("create NPC flow works", async ({ page }) => {
   const createBtn = page.getByTestId("create-npc-btn");
 
   await expect(createBtn).toBeVisible({ timeout: 15000 });
-
   await createBtn.click();
+
+  const modal = page.getByTestId("npc-form-modal");
 
   // ---- Wait for form ----
   await expect(page.locator('input[name="name"]')).toBeVisible();
@@ -50,14 +51,19 @@ test("create NPC flow works", async ({ page }) => {
   const submitBtn = page.getByTestId("form-submit-btn");
 
   await expect(submitBtn).toBeEnabled();
-
   await submitBtn.click();
 
   // ---- HARD SYNC: confirm POST fired ----
   await expect.poll(() => createRequestSeen).toBe(true);
 
-  // ---- Verify modal closed ----
-  await expect(page.getByTestId("create-npc-btn")).toBeVisible();
-  // ---- Verify new NPC visible ----
-  await expect(page.getByText("Test NPC").first()).toBeVisible();
+  // ---- Confirm modal closed ----
+  await expect(modal).toBeHidden({ timeout: 10000 });
+
+  // ---- Verify new NPC appears in list ----
+  const npcListItem = page
+    .getByRole("listitem")
+    .filter({ hasText: "Test NPC" })
+    .first();
+
+  await expect(npcListItem).toBeVisible();
 });
