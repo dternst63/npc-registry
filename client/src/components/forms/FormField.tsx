@@ -15,7 +15,7 @@ interface FormFieldProps {
   rows?: number;
 
   onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
   onBlur: () => void;
 }
@@ -49,35 +49,32 @@ const FormField = ({
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700">
+      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
         {label} {required && "*"}
       </label>
 
       <InputComponent
+        id={name}
         name={name}
         value={value}
         onChange={onChange}
         onBlur={onBlur}
         disabled={disabled}
-        minLength={minLength}   
-        maxLength={maxLength}   
+        minLength={minLength}
+        maxLength={maxLength}
         rows={as === "textarea" ? rows : undefined}
         className={`${baseClasses} ${borderClasses}`}
       />
 
       <div className="flex items-center text-xs mt-1">
         <div className="flex-1">
-          {showError && (
-            <p className="text-red-600">{error}</p>
-          )}
+          {showError && <p className="text-red-600">{error}</p>}
         </div>
 
         {minLength !== undefined && (
           <span
             className={
-              count < minLength && touched
-                ? "text-red-600"
-                : "text-gray-500"
+              count < minLength && touched ? "text-red-600" : "text-gray-500"
             }
           >
             {count} / {maxLength}

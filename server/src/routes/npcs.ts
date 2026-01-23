@@ -7,6 +7,7 @@ const router = Router();
 type NpcPayload = {
   name?: string;
   role?: string;
+  race?: string;
   descriptor?: string;
   agenda?: string;
 };
@@ -15,12 +16,10 @@ type NpcPayload = {
 function validateNpcPayload(body: NpcPayload) {
   if (!body.name || body.name.length < 2) return "Invalid name";
   if (!body.role || body.role.length < 2) return "Invalid role";
-  if (!body.descriptor || body.descriptor.length < 3)
-    return "Invalid descriptor";
-
   if (body.name.length > 50) return "Name too long";
   if (body.role.length > 50) return "Role too long";
-  if (body.descriptor.length > 100) return "Descriptor too long";
+  if (body.descriptor && body.descriptor.length > 100) return "Descriptor too long";
+  if (body.race && body.race.length > 50) return "Race/Species too long";
   if (body.agenda && body.agenda.length > 500) return "Agenda too long";
 
   return null;

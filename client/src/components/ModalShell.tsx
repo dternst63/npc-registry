@@ -14,10 +14,19 @@ const ModalShell = ({ onClose, title, children }: ModalShellProps) => {
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-lg rounded bg-white p-4 shadow-lg">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? "modal-title" : undefined}
+        className="relative z-10 w-full max-w-lg rounded bg-white p-4 shadow-lg"
+      >
         {/* Header */}
         <div className="mb-3 flex items-center justify-between">
-          {title && <h2 className="text-lg font-semibold">{title}</h2>}
+          {title && (
+            <h2 id="modal-title" className="text-lg font-semibold">
+              {title}
+            </h2>
+          )}
 
           <button
             onClick={onClose}

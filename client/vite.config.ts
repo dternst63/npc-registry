@@ -9,6 +9,9 @@ export default defineConfig({
     globals: true,
     setupFiles: "./src/test/setup.ts",
 
+    // ✅ Prevent Vitest from loading Playwright tests
+    exclude: ["ui-tests/**", "node_modules/**"],
+
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "json"],

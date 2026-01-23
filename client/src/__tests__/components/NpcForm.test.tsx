@@ -93,9 +93,7 @@ describe("NpcForm", () => {
     fireEvent.blur(raceInput);
 
     expect(mockHook.handleBlur).toHaveBeenCalled();
-    const agendaInput = document.querySelector(
-      'input[name="agenda"]',
-    ) as HTMLInputElement;
+    const agendaInput = screen.getByLabelText(/agenda/i);
 
     fireEvent.blur(agendaInput);
     expect(mockHook.handleBlur).toHaveBeenCalled();

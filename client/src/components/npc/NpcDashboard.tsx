@@ -62,6 +62,7 @@ const NpcDashboard = () => {
       {/* Toolbar */}
       <div className="mb-4 flex gap-2">
         <button
+          data-testid="create-npc-btn"
           onClick={() => dispatch({ type: "OPEN_CREATE" })}
           disabled={isModalOpen}
           className="rounded bg-black px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
@@ -70,6 +71,7 @@ const NpcDashboard = () => {
         </button>
 
         <button
+          data-testid="edit-npc-btn"
           onClick={() =>
             selectedNpc && dispatch({ type: "OPEN_EDIT", npc: selectedNpc })
           }
@@ -80,6 +82,7 @@ const NpcDashboard = () => {
         </button>
 
         <button
+          data-testid="delete-npc-btn"
           onClick={() =>
             selectedNpc && dispatch({ type: "OPEN_DELETE", npc: selectedNpc })
           }
@@ -89,6 +92,7 @@ const NpcDashboard = () => {
           - Delete NPC
         </button>
         <button
+          data-testid="gm-secrets-btn"
           onClick={() =>
             selectedNpc &&
             dispatch({ type: "OPEN_GM_SECRETS", npc: selectedNpc })
@@ -121,7 +125,6 @@ const NpcDashboard = () => {
           onSubmitSuccess={(newNpc: Npc) => {
             setNpcs((prev) => [...prev, newNpc]);
             setSelectedNpc(newNpc);
-            dispatch({ type: "CLOSE" });
           }}
         />
       )}
@@ -135,10 +138,9 @@ const NpcDashboard = () => {
           onClose={() => dispatch({ type: "CLOSE" })}
           onSubmitSuccess={(updatedNpc: Npc) => {
             setNpcs((prev) =>
-              prev.map((npc) => (npc.id === updatedNpc.id ? updatedNpc : npc))
+              prev.map((npc) => (npc.id === updatedNpc.id ? updatedNpc : npc)),
             );
             setSelectedNpc(updatedNpc);
-            dispatch({ type: "CLOSE" });
           }}
         />
       )}
@@ -156,7 +158,6 @@ const NpcDashboard = () => {
               onClose={() => dispatch({ type: "CLOSE" })}
               onConfirm={async () => {
                 await handleDelete(npc);
-                dispatch({ type: "CLOSE" });
               }}
             />
           );

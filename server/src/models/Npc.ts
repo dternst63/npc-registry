@@ -54,7 +54,7 @@ const NpcSchema = new Schema<INpc>(
     campaignId: { type: String, required: true },
     name: { type: String, required: true, maxlength: 50 },
     role: { type: String, required: true, maxlength: 50 },
-    descriptor: { type: String, required: true, maxlength: 100 },
+    descriptor: { type: String, maxlength: 100 },
     race: { type: String, maxlength: 50 },
     agenda: { type: String, maxlength: 500 },
     gmSecrets: {

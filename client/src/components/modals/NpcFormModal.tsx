@@ -15,7 +15,6 @@ interface NpcFormModalProps {
   onSubmitSuccess: (npc: Npc) => void;
 }
 
-
 const NpcFormModal = ({
   onClose,
   campaignId,
@@ -26,7 +25,6 @@ const NpcFormModal = ({
   const [status, setStatus] = useState<AsyncStatus>("idle");
   const [message, setMessage] = useState<string | null>(null);
 
-  
   const handleSubmit = async (data: NpcFormData) => {
     try {
       setStatus("submitting");
@@ -49,40 +47,42 @@ const NpcFormModal = ({
 
   return (
     <ModalShell onClose={onClose} title={title}>
-      <LoadingBar active={status === "submitting"} />
-      {status !== "idle" && message && (
-        <div
-          className={`mb-3 rounded px-3 py-2 text-sm ${
-            status === "success"
-              ? "bg-green-50 text-green-700"
-              : status === "error"
-              ? "bg-red-50 text-red-700"
-              : "bg-blue-50 text-blue-700"
-          }`}
-        >
-          {message}
-        </div>
-      )}
-
-      {/* SUCCESS STATE */}
-      {status === "success" ? (
-        <div className="flex justify-end pt-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded bg-black px-4 py-2 text-white"
+      <div data-testid="npc-form-modal">
+        <LoadingBar active={status === "submitting"} />
+        {status !== "idle" && message && (
+          <div
+            className={`mb-3 rounded px-3 py-2 text-sm ${
+              status === "success"
+                ? "bg-green-50 text-green-700"
+                : status === "error"
+                  ? "bg-red-50 text-red-700"
+                  : "bg-blue-50 text-blue-700"
+            }`}
           >
-            Close
-          </button>
-        </div>
-      ) : (
-        <NpcForm
-          initialNpc={initialNpc}
-          disabled={status === "submitting"}
-          onSubmit={handleSubmit}
-          onCancel={onClose}
-        />
-      )}
+            {message}
+          </div>
+        )}
+
+        {/* SUCCESS STATE */}
+        {status === "success" ? (
+          <div className="flex justify-end pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded bg-black px-4 py-2 text-white"
+            >
+              Close
+            </button>
+          </div>
+        ) : (
+          <NpcForm
+            initialNpc={initialNpc}
+            disabled={status === "submitting"}
+            onSubmit={handleSubmit}
+            onCancel={onClose}
+          />
+        )}
+      </div>
     </ModalShell>
   );
 };

@@ -24,6 +24,7 @@ const FormActions = ({
       </button>
 
       <button
+        data-testid="form-submit-btn"
         type="submit"
         disabled={disabled || !canSubmit}
         className="rounded bg-black px-4 py-2 text-white
