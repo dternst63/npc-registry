@@ -7,10 +7,6 @@ jobs:
   frontend-tests:
     runs-on: ubuntu-latest
 
-    env:
-      ROLLUP_DISABLE_NATIVE: true
-
-
     defaults:
       run:
         working-directory: client
@@ -28,18 +24,8 @@ jobs:
 
       # ---------- Install ----------
 
-      - name: Clear npm cache
-        run: npm cache clean --force
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Force install Rollup Linux native binary
-        run: npm install @rollup/rollup-linux-x64-gnu --no-save
-
-      - name: Force install LightningCSS Linux binary
-        run: npm install lightningcss-linux-x64-gnu --no-save
-
+      - name: Install dependencies (include native optional deps)
+        run: npm ci --include=optional
 
       # ---------- Unit + Component Tests ----------
 
