@@ -33,6 +33,10 @@ jobs:
       - name: Force install Rollup Linux native binary
         run: npm install @rollup/rollup-linux-x64-gnu --no-save
 
+      - name: Force install LightningCSS Linux binary
+        run: npm install lightningcss-linux-x64-gnu --no-save
+
+
       # ---------- Unit + Component Tests ----------
 
       - name: Run frontend tests with coverage gate
