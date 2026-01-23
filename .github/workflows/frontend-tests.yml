@@ -24,8 +24,11 @@ jobs:
 
       # ---------- Install ----------
 
+      - name: Clear npm cache
+        run: npm cache clean --force
+
       - name: Install dependencies
-        run: npm ci --include=optional
+        run: npm install
 
 
       # ---------- Unit + Component Tests ----------
