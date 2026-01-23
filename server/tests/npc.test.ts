@@ -52,13 +52,14 @@ describe("NPC API", () => {
       expect(res.status).toBe(400);
     });
 
-    it("rejects invalid descriptor", async () => {
-      const res = await request(app)
-        .post("/api/npcs")
-        .send({
-          ...validNpcPayload,
-          descriptor: "ab",
-        });
+    it("rejects overly long descriptor", async () => {
+      const longDescriptor = "x".repeat(200);
+
+      const res = await request(app).post("/api/npcs").send({
+        name: "Test NPC",
+        role: "Mage",
+        descriptor: longDescriptor,
+      });
 
       expect(res.status).toBe(400);
     });
