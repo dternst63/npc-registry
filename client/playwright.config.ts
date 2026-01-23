@@ -7,14 +7,28 @@ export default defineConfig({
   webServer: {
     command: "npm run dev",
     url: "http://localhost:5173",
-    reuseExistingServer: true,
+
+    // IMPORTANT for CI stability
+    reuseExistingServer: false,
+
     timeout: 120000,
+
+    // Helpful for CI debugging
+    stdout: "pipe",
+    stderr: "pipe",
   },
 
   use: {
     baseURL: "http://localhost:5173",
+
     trace: "on-first-retry",
+
     headless: true,
+
+    // CI speed + reliability
+    viewport: { width: 1280, height: 800 },
+    actionTimeout: 15000,
+    navigationTimeout: 30000,
   },
 
   fullyParallel: false,
@@ -29,6 +43,9 @@ export default defineConfig({
   expect: {
     timeout: 5000,
   },
+
+  // Prevent resource exhaustion on GitHub runners
+  workers: process.env.CI ? 2 : undefined,
 
   tsconfig: "./tsconfig.playwright.json",
 
