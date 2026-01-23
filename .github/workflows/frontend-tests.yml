@@ -25,7 +25,8 @@ jobs:
       # ---------- Install ----------
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --include=optional
+
 
       # ---------- Unit + Component Tests ----------
 
