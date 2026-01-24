@@ -56,8 +56,15 @@ test("create NPC flow works", async ({ page }) => {
   // ---- HARD SYNC: confirm POST fired ----
   await expect.poll(() => createRequestSeen).toBe(true);
 
+  // ---- Wait for success state ----
+  const closeBtn = modal.getByRole("button", { name: /close/i });
+  await expect(closeBtn).toBeVisible();
+
+  // ---- Close modal manually ----
+  await closeBtn.click();
+
   // ---- Confirm modal closed ----
-  await expect(modal).toBeHidden({ timeout: 10000 });
+  await expect(modal).toBeHidden();
 
   // ---- Verify new NPC appears in list ----
   const npcListItem = page
