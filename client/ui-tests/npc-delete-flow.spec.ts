@@ -26,10 +26,9 @@ test("Delete NPC flow works", async ({ page }) => {
   const postPayload = JSON.parse(postRequest.postData() || "{}");
 
   expect(postPayload.name).toBe(npcName);
-  
-  // ✅ Wait for close button with extended timeout
+  // Close success modal
   const createCloseBtn = createModal.getByRole("button", { name: /close/i });
-  await expect(createCloseBtn).toBeVisible({ timeout: 10000 });
+  await expect(createCloseBtn).toBeVisible();
   await createCloseBtn.click();
 
   await expect(createModal).toBeHidden();
@@ -49,7 +48,6 @@ test("Delete NPC flow works", async ({ page }) => {
   const deleteBtn = page.getByTestId("delete-npc-btn");
   await expect(deleteBtn).toBeEnabled();
   await deleteBtn.click();
-  
   // Confirm modal appears
   const confirmModal = page.getByRole("dialog");
   await expect(confirmModal).toBeVisible();
@@ -65,10 +63,10 @@ test("Delete NPC flow works", async ({ page }) => {
 
   const deleteRequest = await deletePromise;
   expect(deleteRequest.method()).toBe("DELETE");
-  
-  // ✅ Wait for close button with extended timeout
+  // Confirm modal closes
+  // Wait for success Close button
   const closeBtn = confirmModal.getByRole("button", { name: /close/i });
-  await expect(closeBtn).toBeVisible({ timeout: 10000 });
+  await expect(closeBtn).toBeVisible();
 
   // Close modal (user action)
   await closeBtn.click();
