@@ -2,10 +2,20 @@ name: Frontend Tests + Coverage + UI
 
 on:
   workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+      node:
+        required: true
+        type: string
 
 jobs:
   frontend-tests:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.os }}
+
+    env:
+      CI: true
 
     defaults:
       run:
@@ -18,7 +28,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: ${{ inputs.node }}
           cache: "npm"
           cache-dependency-path: client/package-lock.json
 
@@ -48,12 +58,12 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: frontend-coverage-report
+          name: frontend-coverage-report-${{ inputs.os }}-node${{ inputs.node }}
           path: client/coverage
 
       - name: Upload Playwright report (on failure)
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ inputs.os }}-node${{ inputs.node }}
           path: client/playwright-report
