@@ -70,6 +70,12 @@ test("Delete NPC flow works", async ({ page }) => {
 
   await createModal.getByTestId("form-submit-btn").click();
 
+  const closeBtn = createModal.getByRole("button", { name: /close/i });
+  await expect(closeBtn).toBeVisible();
+
+  // ---- Close modal manually ----
+  await closeBtn.click();
+
   // Wait for modal to close naturally
   await expect(createModal).toBeHidden();
 
