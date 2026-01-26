@@ -37,6 +37,7 @@ test("Edit NPC flow works", async ({ page }) => {
 
   // Wait for NPC to appear
   const npcCard = page.getByText(npcName);
+  
   await expect(npcCard).toBeVisible();
 
   // ---------- EDIT NPC ----------
@@ -66,10 +67,9 @@ test("Edit NPC flow works", async ({ page }) => {
 
   expect(putPayload.role).toBe(updatedRole);
 
-  // ✅ Wait for success state to appear in the UI
-  // This could be a success message, or wait for the close button itself
+  // Wait for success state to appear
   const closeBtn = editModal.getByRole("button", { name: /close/i });
-  await expect(closeBtn).toBeVisible({ timeout: 10000 });
+  await expect(closeBtn).toBeVisible();
 
   // Close modal (user action)
   await closeBtn.click();
