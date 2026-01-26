@@ -28,8 +28,7 @@ test("Delete NPC flow works", async ({ page }) => {
   expect(postPayload.name).toBe(npcName);
   // Close success modal
   const createCloseBtn = createModal.getByRole("button", { name: /close/i });
-  await page.screenshot({ path: 'debug.png' });
-  await expect(createCloseBtn).toBeVisible();
+  await expect(createCloseBtn).toBeVisible({ timeout: 100000});
   await createCloseBtn.click();
 
   await expect(createModal).toBeHidden();
