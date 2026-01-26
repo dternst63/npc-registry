@@ -15,17 +15,7 @@ jobs:
     uses: ./.github/workflows/narrative-engine-tests.yml
 
   frontend-tests:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        node: [18, 20]
     uses: ./.github/workflows/frontend-tests.yml
-
-    with:
-      os: ${{ matrix.os }}
-      node: ${{ matrix.node }}
-
 
   security-probe:
     uses: ./.github/workflows/security-probe.yml

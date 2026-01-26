@@ -45,9 +45,7 @@ export default defineConfig({
   },
 
   // Prevent resource exhaustion on GitHub runners
-  workers: process.env.CI ? 1 : undefined,
-  retries: process.env.CI ? 2 : 0,
-
+  workers: process.env.CI ? 2 : undefined,
 
   tsconfig: "./tsconfig.playwright.json",
 
