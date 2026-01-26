@@ -19,7 +19,7 @@ test("Delete NPC flow works", async ({ page }) => {
         body: JSON.stringify({
           id: "123",
           name: npcName,
-          role: "Merchant",
+          role: "Guard",
         }),
       });
     } else {
