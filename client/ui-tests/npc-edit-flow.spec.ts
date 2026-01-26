@@ -37,6 +37,7 @@ test("Edit NPC flow works", async ({ page }) => {
 
   // Wait for NPC to appear
   const npcCard = page.getByText(npcName);
+  await npcCard.waitFor();
   await expect(npcCard).toBeVisible();
 
   // ---------- EDIT NPC ----------
