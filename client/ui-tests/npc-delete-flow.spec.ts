@@ -1,10 +1,33 @@
 import { test, expect } from "@playwright/test";
 
 test("Delete NPC flow works", async ({ page }) => {
-  await page.goto("/");
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let createRequestSeen = false;
   // Unique NPC name (parallel safe)
   const npcName = `Delete Flow NPC ${Date.now()}`;
+
+  // ---- Intercept ONLY create NPC call ----
+  await page.route("**/api/npcs", async (route) => {
+    const req = route.request();
+
+    if (req.method() === "POST") {
+      createRequestSeen = true;
+
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          id: "123",
+          name: npcName,
+          role: "Merchant",
+        }),
+      });
+    } else {
+      await route.continue();
+    }
+  });
+
+  await page.goto("/");
 
   // ---------- CREATE NPC (Seed) ----------
 
@@ -28,7 +51,7 @@ test("Delete NPC flow works", async ({ page }) => {
   expect(postPayload.name).toBe(npcName);
   // Close success modal
   const createCloseBtn = createModal.getByRole("button", { name: /close/i });
-  await expect(createCloseBtn).toBeVisible({ timeout: 10000 });
+  await expect(createCloseBtn).toBeVisible();
   await createCloseBtn.click();
 
   await expect(createModal).toBeHidden();
