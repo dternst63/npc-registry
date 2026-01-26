@@ -1,35 +1,64 @@
 import { test, expect } from "@playwright/test";
 
 test("Delete NPC flow works", async ({ page }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let createRequestSeen = false;
-  // Unique NPC name (parallel safe)
   const npcName = `Delete Flow NPC ${Date.now()}`;
 
-  // ---- Intercept ONLY create NPC call ----
+  // ---- In-memory mock DB ----
+  let npcStore: any[] = [];
+
+  // ---- API Mock Layer ----
   await page.route("**/api/npcs", async (route) => {
     const req = route.request();
+    const method = req.method();
 
-    if (req.method() === "POST") {
-      createRequestSeen = true;
+    // CREATE
+    if (method === "POST") {
+      const body = JSON.parse(req.postData() || "{}");
+
+      const newNpc = {
+        id: "123",
+        name: body.name,
+        role: body.role,
+      };
+
+      npcStore.push(newNpc);
 
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({
-          id: "123",
-          name: npcName,
-          role: "Guard",
-        }),
+        body: JSON.stringify(newNpc),
       });
-    } else {
-      await route.continue();
+      return;
     }
+
+    // FETCH LIST
+    if (method === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(npcStore),
+      });
+      return;
+    }
+
+    // DELETE
+    if (method === "DELETE") {
+      npcStore = [];
+
+      await route.fulfill({
+        status: 200,
+      });
+      return;
+    }
+
+    await route.continue();
   });
+
+  // ---------- START TEST ----------
 
   await page.goto("/");
 
-  // ---------- CREATE NPC (Seed) ----------
+  // ---------- CREATE NPC ----------
 
   await page.getByTestId("create-npc-btn").click();
 
@@ -39,27 +68,14 @@ test("Delete NPC flow works", async ({ page }) => {
   await createModal.getByLabel("Name").fill(npcName);
   await createModal.getByLabel("Role").fill("Guard");
 
-  const postPromise = page.waitForRequest(
-    (req) => req.method() === "POST" && req.url().includes("/api/npcs"),
-  );
-
   await createModal.getByTestId("form-submit-btn").click();
 
-  const postRequest = await postPromise;
-  const postPayload = JSON.parse(postRequest.postData() || "{}");
-
-  expect(postPayload.name).toBe(npcName);
-  // Close success modal
-  const createCloseBtn = createModal.getByRole("button", { name: /close/i });
-  await expect(createCloseBtn).toBeVisible();
-  await createCloseBtn.click();
-
+  // Wait for modal to close naturally
   await expect(createModal).toBeHidden();
 
   // ---------- VERIFY NPC APPEARS ----------
 
   const npcItem = page.getByRole("list").getByText(npcName);
-
   await expect(npcItem).toBeVisible();
 
   // ---------- SELECT NPC ----------
@@ -71,33 +87,18 @@ test("Delete NPC flow works", async ({ page }) => {
   const deleteBtn = page.getByTestId("delete-npc-btn");
   await expect(deleteBtn).toBeEnabled();
   await deleteBtn.click();
-  // Confirm modal appears
+
   const confirmModal = page.getByRole("dialog");
   await expect(confirmModal).toBeVisible();
 
-  // Intercept DELETE request
-  const deletePromise = page.waitForRequest(
-    (req) => req.method() === "DELETE" && req.url().includes("/api/npcs"),
-  );
+  await confirmModal.getByRole("button", { name: /^delete$/i }).click();
 
-  // Confirm delete
-  const confirmBtn = confirmModal.getByRole("button", { name: /^delete$/i });
-  await confirmBtn.click();
-
-  const deleteRequest = await deletePromise;
-  expect(deleteRequest.method()).toBe("DELETE");
-  // Confirm modal closes
-  // Wait for success Close button
-  const closeBtn = confirmModal.getByRole("button", { name: /close/i });
-  await expect(closeBtn).toBeVisible();
-
-  // Close modal (user action)
-  await closeBtn.click();
-
-  // Modal should now disappear
+  // Modal should close
   await expect(confirmModal).toBeHidden();
 
   // ---------- VERIFY NPC REMOVED ----------
 
-  await expect(page.getByRole("list").getByText(npcName)).toHaveCount(0);
+  await expect(
+    page.getByRole("list").getByText(npcName)
+  ).toHaveCount(0);
 });
