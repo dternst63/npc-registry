@@ -1,35 +1,49 @@
 import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
-
   testDir: "./ui-tests",
+
+  // ---------- Dev Server ----------
 
   webServer: {
     command: "npm run dev",
     url: "http://localhost:5173",
 
-    // IMPORTANT for CI stability
-    reuseExistingServer: false,
+    // Reuse locally, always fresh in CI
+    reuseExistingServer: !process.env.CI,
 
     timeout: 120000,
 
-    // Helpful for CI debugging
     stdout: "pipe",
     stderr: "pipe",
   },
 
+  // ---------- Reporting (IMPORTANT FOR GITHUB) ----------
+
+  reporter: [
+    ["list"],               // visible logs in GitHub Actions
+    ["html", { open: "never" }], // downloadable HTML report artifact
+  ],
+
+  // ---------- Browser Settings ----------
+
   use: {
     baseURL: "http://localhost:5173",
 
-    trace: "on-first-retry",
+    // 🔥 CRITICAL FOR DEBUGGING
+    trace: "retain-on-failure",
+    video: "retain-on-failure",
+    screenshot: "only-on-failure",
 
     headless: true,
 
-    // CI speed + reliability
     viewport: { width: 1280, height: 800 },
+
     actionTimeout: 15000,
     navigationTimeout: 30000,
   },
+
+  // ---------- Execution Strategy ----------
 
   fullyParallel: false,
 
@@ -40,13 +54,18 @@ export default defineConfig({
     },
   ],
 
+  // ---------- Assertion Timing ----------
+
   expect: {
-    timeout: 5000,
+    timeout: 8000,
   },
 
-  // Prevent resource exhaustion on GitHub runners
+  // ---------- CI Protection ----------
+
   workers: process.env.CI ? 1 : undefined,
+  retries: process.env.CI ? 1 : 0,
+
+  // ---------- TypeScript ----------
 
   tsconfig: "./tsconfig.playwright.json",
-
 });
