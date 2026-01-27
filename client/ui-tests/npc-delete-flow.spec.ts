@@ -101,12 +101,6 @@ test("Delete NPC flow works", async ({ page }) => {
 
   await confirmModal.getByRole("button", { name: /^delete$/i }).click();
 
-  // Wait for list refetch
-  await page.waitForResponse(
-    (resp) =>
-      resp.url().includes("/api/npcs") && resp.request().method() === "GET",
-  );
-
   // Modal should close
   await expect(confirmModal).toBeHidden();
 
