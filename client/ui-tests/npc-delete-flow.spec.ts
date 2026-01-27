@@ -6,8 +6,8 @@ test("Delete NPC flow works", async ({ page }) => {
   // ---- In-memory mock DB ----
   let npcStore: any[] = [];
 
-  // ---- API Mock Layer ----
-  await page.route("**/api/npcs", async (route) => {
+  // ---- API Mock Handler ----
+  const handleNpcRoute = async (route) => {
     const req = route.request();
     const method = req.method();
 
@@ -54,7 +54,11 @@ test("Delete NPC flow works", async ({ page }) => {
     }
 
     await route.continue();
-  });
+  };
+
+  // ---- Register Routes ----
+  await page.route("**/api/npcs", handleNpcRoute);
+  await page.route("**/api/npcs/**", handleNpcRoute);
 
   // ---------- START TEST ----------
 
@@ -100,8 +104,8 @@ test("Delete NPC flow works", async ({ page }) => {
   await expect(confirmModal).toBeVisible();
 
   await confirmModal.getByRole("button", { name: /^delete$/i }).click();
-  await confirmModal.getByRole("button", { name: /^close$/i }).click();
-  // Modal should close
+
+  // Modal should close after success
   await expect(confirmModal).toBeHidden();
 
   // ---------- VERIFY NPC REMOVED ----------
