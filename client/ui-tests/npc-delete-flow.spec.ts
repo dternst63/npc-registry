@@ -7,7 +7,7 @@ test("Delete NPC flow works", async ({ page }) => {
   let npcStore: any[] = [];
 
   // ---- API Mock Layer ----
-  await page.route("**/api/npcs", async (route) => {
+  await page.route("**/api/npcs*", async (route) => {
     const req = route.request();
     const method = req.method();
 
