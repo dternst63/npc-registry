@@ -104,6 +104,7 @@ test("Delete NPC flow works", async ({ page }) => {
   await expect(confirmModal).toBeVisible();
 
   await confirmModal.getByRole("button", { name: /^delete$/i }).click();
+  await confirmModal.getByRole("button", { name: /^close$/i }).click();
 
   // Modal should close after success
   await expect(confirmModal).toBeHidden();
