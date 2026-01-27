@@ -7,7 +7,7 @@ test("Delete NPC flow works", async ({ page }) => {
   let npcStore: any[] = [];
 
   // ---- API Mock Layer ----
-  await page.route("**/api/npcs", async (route) => {
+  await page.route("**/api/npcs/**", async (route) => {
     const req = route.request();
     const method = req.method();
 
@@ -100,7 +100,7 @@ test("Delete NPC flow works", async ({ page }) => {
   await expect(confirmModal).toBeVisible();
 
   await confirmModal.getByRole("button", { name: /^delete$/i }).click();
-
+  await confirmModal.getByRole("button", { name: /^close$/i }).click();
   // Modal should close
   await expect(confirmModal).toBeHidden();
 
