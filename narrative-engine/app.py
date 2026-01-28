@@ -12,7 +12,7 @@ from models.schemas import (
 )
 
 from rules.secret_analyzer import analyze_secret_logic
-from secrets.secret_generator import generate_secret_logic
+from app_secrets.secret_generator import generate_secret_logic
 
 
 # ------------------------
