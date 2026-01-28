@@ -18,15 +18,17 @@ test("NPC full lifecycle flow works", async ({ page }) => {
   await createModal.getByLabel("Name").fill(npcName);
   await createModal.getByLabel("Role").fill("Scout");
 
-  const postPromise = page.waitForRequest(req =>
-    req.method() === "POST" &&
-    req.url().endsWith("/api/npcs"),
+  const postResponse = page.waitForResponse(resp =>
+    resp.request().method() === "POST" &&
+    resp.url().endsWith("/api/npcs") &&
+    resp.status() === 200,
   );
 
   await createModal.getByTestId("form-submit-btn").click();
-  await postPromise;
+  await postResponse;
 
   const createCloseBtn = createModal.getByRole("button", { name: /close/i });
+  await expect(createCloseBtn).toBeEnabled();
   await createCloseBtn.click();
 
   await expect(createModal).toBeHidden();
@@ -35,9 +37,7 @@ test("NPC full lifecycle flow works", async ({ page }) => {
   // SELECT
   // --------------------
 
-  const npcItem = page
-    .getByRole("list")
-    .getByText(npcName);
+  const npcItem = page.getByRole("list").getByText(npcName);
 
   await expect(npcItem).toBeVisible();
   await npcItem.click();
@@ -56,15 +56,17 @@ test("NPC full lifecycle flow works", async ({ page }) => {
   const roleInput = editModal.getByLabel("Role");
   await roleInput.fill(updatedRole);
 
-  const putPromise = page.waitForRequest(req =>
-    req.method() === "PUT" &&
-    req.url().match(/\/api\/npcs\/[^/]+$/),
+  const putResponse = page.waitForResponse(resp =>
+    resp.request().method() === "PUT" &&
+    /\/api\/npcs\/[^/]+$/.test(resp.url()) &&
+    resp.status() === 200,
   );
 
   await editModal.getByTestId("form-submit-btn").click();
-  await putPromise;
+  await putResponse;
 
   const editCloseBtn = editModal.getByRole("button", { name: /close/i });
+  await expect(editCloseBtn).toBeEnabled();
   await editCloseBtn.click();
 
   await expect(editModal).toBeHidden();
@@ -80,17 +82,21 @@ test("NPC full lifecycle flow works", async ({ page }) => {
   const confirmModal = page.getByRole("dialog");
   await expect(confirmModal).toBeVisible();
 
-  const deletePromise = page.waitForRequest(req =>
-    req.method() === "DELETE" &&
-    req.url().match(/\/api\/npcs\/[^/]+$/),
+  const deleteResponse = page.waitForResponse(resp =>
+    resp.request().method() === "DELETE" &&
+    /\/api\/npcs\/[^/]+$/.test(resp.url()) &&
+    resp.status() === 200,
   );
 
-  const confirmDeleteBtn = confirmModal.getByRole("button", { name: /^delete$/i });
-  await confirmDeleteBtn.click();
+  const confirmDeleteBtn = confirmModal.getByRole("button", {
+    name: /^delete$/i,
+  });
 
-  await deletePromise;
+  await confirmDeleteBtn.click();
+  await deleteResponse;
 
   const deleteCloseBtn = confirmModal.getByRole("button", { name: /close/i });
+  await expect(deleteCloseBtn).toBeEnabled();
   await deleteCloseBtn.click();
 
   await expect(confirmModal).toBeHidden();
