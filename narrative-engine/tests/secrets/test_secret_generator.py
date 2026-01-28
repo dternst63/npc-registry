@@ -1,4 +1,4 @@
-from secrets.secret_generator import generate_secret_logic
+from app_secrets.secret_generator import generate_secret_logic
 
 
 class FakeRNG:
