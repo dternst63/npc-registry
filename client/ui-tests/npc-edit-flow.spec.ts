@@ -82,6 +82,8 @@ test("Edit NPC flow works", async ({ page }) => {
 
   await createModal.getByTestId("form-submit-btn").click();
 
+  await page.waitForTimeout(5000);
+
   const closeBtn = createModal.getByRole("button", { name: /close/i });
   await expect(closeBtn).toBeVisible();
 
