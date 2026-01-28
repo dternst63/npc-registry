@@ -47,15 +47,22 @@ test("Edit NPC flow works", async ({ page }) => {
     if (method === "PUT") {
       const body = JSON.parse(req.postData() || "{}");
 
-      npcStore = npcStore.map((npc) =>
-        npc.id === "123" ? { ...npc, ...body } : npc,
-      );
+      let updatedNpc;
+
+      npcStore = npcStore.map((npc) => {
+        if (npc.id === "123") {
+          updatedNpc = { ...npc, ...body };
+          return updatedNpc;
+        }
+        return npc;
+      });
 
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({ success: true }),
+        body: JSON.stringify(updatedNpc),
       });
+
       return;
     }
 
@@ -78,11 +85,9 @@ test("Edit NPC flow works", async ({ page }) => {
   await expect(createModal).toBeVisible();
 
   await createModal.getByLabel("Name").fill(npcName);
-  await createModal.getByLabel("Role").fill("Guard");
+  await createModal.getByLabel("Role").fill(originalRole);
 
   await createModal.getByTestId("form-submit-btn").click();
-
-  await page.waitForTimeout(5000);
 
   const closeBtn = createModal.getByRole("button", { name: /close/i });
   await expect(closeBtn).toBeVisible();
@@ -114,6 +119,7 @@ test("Edit NPC flow works", async ({ page }) => {
 
   await editModal.getByTestId("form-submit-btn").click();
 
+  await page.waitForTimeout(5000);
   const closeEditBtn = editModal.getByRole("button", { name: /close/i });
   await expect(closeEditBtn).toBeVisible();
 
