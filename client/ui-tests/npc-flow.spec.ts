@@ -19,7 +19,8 @@ test("NPC full lifecycle flow works", async ({ page }) => {
   await createModal.getByLabel("Role").fill("Scout");
 
   const postPromise = page.waitForRequest(req =>
-    req.method() === "POST" && req.url().includes("/api/npcs"),
+    req.method() === "POST" &&
+    req.url().endsWith("/api/npcs"),
   );
 
   await createModal.getByTestId("form-submit-btn").click();
@@ -56,7 +57,8 @@ test("NPC full lifecycle flow works", async ({ page }) => {
   await roleInput.fill(updatedRole);
 
   const putPromise = page.waitForRequest(req =>
-    req.method() === "PUT" && req.url().includes("/api/npcs"),
+    req.method() === "PUT" &&
+    req.url().match(/\/api\/npcs\/[^/]+$/),
   );
 
   await editModal.getByTestId("form-submit-btn").click();
@@ -79,7 +81,8 @@ test("NPC full lifecycle flow works", async ({ page }) => {
   await expect(confirmModal).toBeVisible();
 
   const deletePromise = page.waitForRequest(req =>
-    req.method() === "DELETE" && req.url().includes("/api/npcs"),
+    req.method() === "DELETE" &&
+    req.url().match(/\/api\/npcs\/[^/]+$/),
   );
 
   const confirmDeleteBtn = confirmModal.getByRole("button", { name: /^delete$/i });
@@ -92,7 +95,10 @@ test("NPC full lifecycle flow works", async ({ page }) => {
 
   await expect(confirmModal).toBeHidden();
 
-  // Verify removed from list
+  // --------------------
+  // VERIFY REMOVAL
+  // --------------------
+
   await expect(
     page.getByRole("list").getByText(npcName),
   ).toHaveCount(0);
