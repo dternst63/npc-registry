@@ -1,7 +1,8 @@
 import type { Npc } from "../types/Npc";
 import type { NpcFormData } from "../types/NpcForm";
+import { API_BASE_URL } from "./api";
 
-const API_BASE = "http://localhost:3001/api/npcs";
+const NPC_ENDPOINT = `${API_BASE_URL}/api/npcs`;
 
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
@@ -12,8 +13,9 @@ async function handleResponse<T>(res: Response): Promise<T> {
 }
 
 export const npcService = {
+
   async getAll(): Promise<Npc[]> {
-    const res = await fetch(API_BASE);
+    const res = await fetch(NPC_ENDPOINT);
     return handleResponse<Npc[]>(res);
   },
 
@@ -21,7 +23,7 @@ export const npcService = {
     campaignId: string,
     data: NpcFormData
   ): Promise<Npc> {
-    const res = await fetch(API_BASE, {
+    const res = await fetch(NPC_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ campaignId, ...data }),
@@ -35,7 +37,7 @@ export const npcService = {
     campaignId: string,
     data: NpcFormData
   ): Promise<Npc> {
-    const res = await fetch(`${API_BASE}/${id}`, {
+    const res = await fetch(`${NPC_ENDPOINT}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ campaignId, ...data }),
@@ -45,7 +47,7 @@ export const npcService = {
   },
 
   async remove(id: string): Promise<void> {
-    const res = await fetch(`${API_BASE}/${id}`, {
+    const res = await fetch(`${NPC_ENDPOINT}/${id}`, {
       method: "DELETE",
     });
 
@@ -53,4 +55,5 @@ export const npcService = {
       throw new Error("Delete failed");
     }
   },
+
 };

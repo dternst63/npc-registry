@@ -1,11 +1,10 @@
 import type { GmSecret, SecretsResponse } from "../types/GmSecret";
-
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+import { API_BASE_URL } from "./api";
 
 // ---------- Fetch Secrets ----------
 
 export async function getNpcSecrets(npcId: string): Promise<SecretsResponse> {
-  const res = await fetch(`${BASE_URL}/api/npcs/${npcId}/secrets`);
+  const res = await fetch(`${API_BASE_URL}/api/npcs/${npcId}/secrets`);
 
   const data: SecretsResponse = await res.json();
 
@@ -22,7 +21,7 @@ export async function addNpcSecret(
   npcId: string,
   payload: { text: string; category: string },
 ): Promise<SecretsResponse> {
-  const res = await fetch(`${BASE_URL}/api/npcs/${npcId}/secrets`, {
+  const res = await fetch(`${API_BASE_URL}/api/npcs/${npcId}/secrets`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -49,11 +48,14 @@ export async function updateNpcSecret(
     revealed: boolean;
   }>,
 ): Promise<SecretsResponse> {
-  const res = await fetch(`${BASE_URL}/api/npcs/${npcId}/secrets/${secretId}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+  const res = await fetch(
+    `${API_BASE_URL}/api/npcs/${npcId}/secrets/${secretId}`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    },
+  );
 
   const data: SecretsResponse = await res.json();
 
@@ -70,9 +72,12 @@ export async function deleteNpcSecret(
   npcId: string,
   secretId: string,
 ): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/npcs/${npcId}/secrets/${secretId}`, {
-    method: "DELETE",
-  });
+  const res = await fetch(
+    `${API_BASE_URL}/api/npcs/${npcId}/secrets/${secretId}`,
+    {
+      method: "DELETE",
+    },
+  );
 
   if (!res.ok) {
     throw new Error("Failed to delete NPC secret");
@@ -89,7 +94,7 @@ export async function analyzeNpcSecret(
   notes: string[];
 }> {
   const res = await fetch(
-    `${BASE_URL}/api/npcs/${npcId}/secrets/${secretId}/analyze`,
+    `${API_BASE_URL}/api/npcs/${npcId}/secrets/${secretId}/analyze`,
     {
       method: "POST",
     },
@@ -109,10 +114,13 @@ export async function analyzeNpcSecret(
 export async function generateNpcSecret(
   npcId: string,
 ): Promise<SecretsResponse | null> {
-  const res = await fetch(`${BASE_URL}/api/npcs/${npcId}/secrets/generate`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-  });
+  const res = await fetch(
+    `${API_BASE_URL}/api/npcs/${npcId}/secrets/generate`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    },
+  );
 
   const data = await res.json();
 

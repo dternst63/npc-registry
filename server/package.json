@@ -6,14 +6,18 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "start:prod": "NODE_ENV=production node dist/index.js",
     "test": "cross-env NODE_ENV=test vitest",
     "test:ci": "cross-env NODE_ENV=test vitest --run",
     "test:coverage": "cross-env NODE_ENV=test vitest run --coverage"
   },
   "dependencies": {
+    "compression": "^1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^4.18.2",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
     "mongoose": "^9.1.3",
     "node-fetch": "^3.3.2",
     "uuid": "^9.0.1"
