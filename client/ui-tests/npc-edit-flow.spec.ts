@@ -122,4 +122,4 @@ test("Edit NPC flow works", async ({ page }) => {
   // ---------- VERIFY UPDATE ----------
 
   await expect(page.getByText(updatedRole)).toBeVisible();
-});c
+});
