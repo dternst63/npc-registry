@@ -1,5 +1,11 @@
 import { Router } from "express";
-import Npc from "../models/Npc";
+import Npc from "../models/Npc.js";
+
+interface GeneratedSecret {
+  text: string;
+  category?: string;
+  confidence?: number;
+}
 
 const router = Router();
 
@@ -14,7 +20,7 @@ router.post("/:npcId/secrets/generate", async (req, res) => {
       return res.status(404).json({ error: "NPC not found" });
     }
 
-    let generated;
+    let generated: GeneratedSecret | null = null;
     let attempts = 0;
     const MAX_ATTEMPTS = 5;
 
@@ -30,10 +36,12 @@ router.post("/:npcId/secrets/generate", async (req, res) => {
         }),
       });
 
-      generated = await response.json();
+      const payload = (await response.json()) as GeneratedSecret;
+
+      generated = payload;
 
       const isDuplicate = npc.gmSecrets.secrets.some(
-        (s) => s.text === generated.text,
+        (s: { text: string }) => s.text === generated!.text,
       );
 
       if (!isDuplicate) break;
@@ -48,7 +56,7 @@ router.post("/:npcId/secrets/generate", async (req, res) => {
     }
 
     // HARD VALIDATION GUARD
-    if (!generated.text) {
+    if (!generated || !generated.text) {
       console.error("Invalid generator payload:", generated);
       return res.status(500).json({ error: "Invalid secret generated" });
     }
@@ -58,7 +66,7 @@ router.post("/:npcId/secrets/generate", async (req, res) => {
     // ---------- DUPLICATE SAFETY CHECK ----------
 
     const isDuplicate = npc.gmSecrets.secrets.some(
-      (s) => s.text === generated.text,
+      (s: { text: string }) => s.text === generated!.text,
     );
 
     if (isDuplicate) {

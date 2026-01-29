@@ -1,6 +1,6 @@
 import { Router } from "express";
 import mongoose from "mongoose";
-import Npc from "../models/Npc";
+import Npc from "../models/Npc.js";
 
 const router = Router();
 
