@@ -1,9 +1,15 @@
 import request from "supertest";
-import { describe, it, expect, beforeEach } from "vitest";
-import app from "../src/index";
+import { describe, it, expect, beforeEach, beforeAll } from "vitest";
+import {createApp} from "../src/index";
 import Npc from "../src/models/Npc";
 import mongoose from "mongoose";
 import { resetFetchMock } from "./mocks";
+
+let app: ReturnType<typeof createApp>;
+
+beforeAll(() => {
+  app = createApp();
+});
 
 beforeEach(() => {
   resetFetchMock();

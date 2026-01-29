@@ -1,14 +1,20 @@
-import { beforeEach, describe, it, expect } from "vitest";
+import { beforeEach, describe, it, expect, beforeAll } from "vitest";
 import request from "supertest";
-import app from "../src/index";
+import { createApp } from "../src/index";
 import mongoose from "mongoose";
 import Npc from "../src/models/Npc";
+
+let app: ReturnType<typeof createApp>;
 
 import {
   resetFetchMock,
   mockAnalyzerSuccess,
   mockAnalyzerFailure,
 } from "./mocks";
+
+beforeAll(() => {
+  app = createApp();
+});
 
 beforeEach(() => {
   resetFetchMock();

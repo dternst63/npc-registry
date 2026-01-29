@@ -1,8 +1,10 @@
 import request from "supertest";
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import app from "../src/index";
+import { describe, it, expect, beforeEach, vi, beforeAll } from "vitest";
+import {createApp} from "../src/index";
 import Npc from "../src/models/Npc";
 import { resetFetchMock } from "./mocks";
+
+let app: ReturnType<typeof createApp>;
 
 // ----------------------------
 // Helpers
@@ -28,6 +30,10 @@ const mockGeneratorResponse = (payload: any, ok = true) => {
 // ----------------------------
 // Test Suite
 // ----------------------------
+
+beforeAll(() => {
+  app = createApp();
+});
 
 beforeEach(() => {
   resetFetchMock();

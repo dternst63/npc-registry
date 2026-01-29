@@ -1,10 +1,11 @@
 import request from "supertest";
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import app from "../src/index";
+import { describe, it, expect, beforeEach, vi, beforeAll } from "vitest";
+import { createApp } from "../src/index";
 import { resetFetchMock } from "./mocks";
 import Npc from "../src/models/Npc";
 import mongoose from "mongoose";
 
+let app: ReturnType<typeof createApp>;
 /**
  * Shared test payloads
  */
@@ -21,6 +22,10 @@ const updateNpcPayload = {
   role: "Mage",
   descriptor: "Updated desc",
 };
+
+beforeAll(() => {
+  app = createApp();
+});
 
 beforeEach(() => {
   resetFetchMock();
