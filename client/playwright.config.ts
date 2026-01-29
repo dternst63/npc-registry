@@ -6,8 +6,8 @@ export default defineConfig({
   // ---------- Dev Server ----------
 
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:5173",
+    command: "npm run preview",
+    url: "http://localhost:4173",
 
     // Reuse locally, always fresh in CI
     reuseExistingServer: !process.env.CI,
@@ -28,7 +28,7 @@ export default defineConfig({
   // ---------- Browser Settings ----------
 
   use: {
-    baseURL: "http://localhost:5173",
+    baseURL: "http://localhost:4173",
 
     // 🔥 CRITICAL FOR DEBUGGING
     trace: "retain-on-failure",
