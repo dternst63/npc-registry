@@ -6,7 +6,7 @@ export default defineConfig({
   // ---------- Dev Server ----------
 
   webServer: {
-    command: "npm run preview",
+    command: "npm run preview -- --host",
     url: "http://localhost:4173",
 
     // Reuse locally, always fresh in CI
