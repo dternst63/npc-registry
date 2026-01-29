@@ -52,7 +52,7 @@ test("create NPC flow works", async ({ page }) => {
   // -----------------------------
 
   await page.goto("/", { waitUntil: "domcontentloaded" });
-
+  
   // Hard wait for React mount
   await page.waitForSelector('[data-testid="create-npc-btn"]');
 

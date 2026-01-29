@@ -6,7 +6,7 @@ export default defineConfig({
   // ---------- Dev Server ----------
 
   webServer: {
-    command: "npm run preview -- --host --strictPort",
+    command: "npm run build && npm run preview -- --host --strictPort",
     port: 4173,
 
     reuseExistingServer: !process.env.CI,
