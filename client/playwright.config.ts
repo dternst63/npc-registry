@@ -8,20 +8,24 @@ export default defineConfig({
   webServer: {
     command: "npm run preview -- --host --strictPort",
     port: 4173,
-    // Reuse locally, always fresh in CI
-    reuseExistingServer: !process.env.CI,
 
+    reuseExistingServer: !process.env.CI,
     timeout: 120000,
+
+    // 🔥 FIX: Inject frontend env vars for CI
+    env: {
+      VITE_API_BASE_URL: "http://localhost:3001",
+    },
 
     stdout: "pipe",
     stderr: "pipe",
   },
 
-  // ---------- Reporting (IMPORTANT FOR GITHUB) ----------
+  // ---------- Reporting ----------
 
   reporter: [
-    ["list"],               // visible logs in GitHub Actions
-    ["html", { open: "never" }], // downloadable HTML report artifact
+    ["list"],
+    ["html", { open: "never" }],
   ],
 
   // ---------- Browser Settings ----------
@@ -29,7 +33,6 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:4173",
 
-    // 🔥 CRITICAL FOR DEBUGGING
     trace: "retain-on-failure",
     video: "retain-on-failure",
     screenshot: "only-on-failure",
