@@ -11,7 +11,10 @@ import secretAnalysisRoutes from "./routes/secretAnalysis.js";
 import secretGeneratorRoutes from "./routes/secretGenerator.js";
 import { connectDb } from "../db.js";
 
-dotenv.config();
+dotenv.config({
+  path: `.env.${process.env.NODE_ENV || "development"}`,
+});
+
 
 // ✅ Production-safe PORT handling
 const PORT = process.env.PORT || 3001;
