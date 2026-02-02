@@ -25,7 +25,10 @@ router.post("/:npcId/secrets/generate", async (req, res) => {
     const MAX_ATTEMPTS = 5;
 
     while (attempts < MAX_ATTEMPTS) {
-      const response = await fetch("http://127.0.0.1:8000/generate-secret", {
+      const NARRATIVE_ENGINE =
+        process.env.NARRATIVE_ENGINE_URL || "http://localhost:8000";
+
+      const response = await fetch(`${NARRATIVE_ENGINE}/generate-secret`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

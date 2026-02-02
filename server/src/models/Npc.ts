@@ -58,8 +58,14 @@ const NpcSchema = new Schema<INpc>(
     race: { type: String, maxlength: 50 },
     agenda: { type: String, maxlength: 500 },
     gmSecrets: {
-      enabled: { type: Boolean, default: false },
-      secrets: { type: [GmSecretSchema], default: [] },
+      type: {
+        enabled: { type: Boolean, default: true },
+        secrets: { type: [GmSecretSchema], default: [] },
+      },
+      default: () => ({
+        enabled: true,
+        secrets: [],
+      }),
     },
   },
   {

@@ -1,0 +1,62 @@
+services:
+
+  mongo:
+    image: mongo:7
+    restart: always
+    ports:
+    - "27017:27017"
+    volumes:
+    - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  npc-narrative:
+    image: npc-narrative
+    restart: always
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: 
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"
+      ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  npc-api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: npc-api
+    restart: always
+    ports:
+    - "3001:3001"
+    environment:
+      NODE_ENV: production
+      MONGO_URI: mongodb://mongo:27017/npcdb
+      NARRATIVE_ENGINE_URL: http://npc-narrative:8000
+      CLIENT_URL: http://localhost:4173
+    depends_on:
+      mongo:
+        condition: service_healthy
+      npc-narrative:
+        condition: service_healthy
+
+  npc-client:
+    image: npc-client
+    restart: always
+    ports:
+      - "4173:80"
+    depends_on:
+      - npc-api
+
+volumes:
+  mongo-data:
