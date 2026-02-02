@@ -1,7 +1,6 @@
 import { Router } from "express";
 import mongoose from "mongoose";
 import Npc from "../models/Npc.js";
-console.log("SECRET ANALYSIS ROUTE LOADED");
 
 const router = Router();
 
@@ -34,11 +33,6 @@ router.post("/:npcId/secrets/:secretId/analyze", async (req, res) => {
     const NARRATIVE_ENGINE =
       process.env.NARRATIVE_ENGINE_URL || "http://localhost:8000";
 
-    console.log("NPC:", npc._id);
-    console.log("Secrets array:", npc.gmSecrets.secrets);
-    console.log("SecretId:", secretId);
-    console.log("Resolved secret:", secret);
-
     const response = await fetch(`${NARRATIVE_ENGINE}/analyze-secret`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -49,14 +43,11 @@ router.post("/:npcId/secrets/:secretId/analyze", async (req, res) => {
       }),
     });
 
-    const raw = await response.text();
-
     if (!response.ok) {
-      console.error("Narrative analyze error:", raw);
-      return res.status(500).json({ error: "Analyzer service error" });
+      throw new Error("Analyzer service error");
     }
 
-    const analysis = JSON.parse(raw);
+    const analysis = await response.json();
 
     secret.category = analysis.category;
     secret.confidence = analysis.confidence;
