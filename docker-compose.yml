@@ -41,7 +41,7 @@ services:
     - "3001:3001"
     environment:
       NODE_ENV: production
-      MONGO_URI: mongodb://mongo:27017/npcdb
+      MONGO_URI: mongodb+srv://dternst63:Dragon&1982@npc-registry.mnkljwx.mongodb.net/npcdb?retryWrites=true&w=majority&appName=npc-registry
       NARRATIVE_ENGINE_URL: http://npc-narrative:8000
       CLIENT_URL: http://localhost:4173
     depends_on:
